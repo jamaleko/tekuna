@@ -13,10 +13,25 @@ func main() {
 <html>
 <head>
     <title>Tekuna News</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Tekuna News 🚀</h1>
-    <p>Portal berita teknologi</p>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4 text-white text-xl font-bold">
+        Tekuna
+    </nav>
+
+    <!-- Content -->
+    <div class="p-6">
+        <h1 class="text-3xl font-bold mb-4">Berita Teknologi</h1>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-xl font-semibold">Website Tekuna resmi launch 🚀</h2>
+            <p class="text-gray-600">Ini adalah awal dari portal berita teknologi.</p>
+        </div>
+    </div>
+
 </body>
 </html>
 		`))
