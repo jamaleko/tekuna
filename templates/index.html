@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tekuna - Portal Berita Teknologi</title>
+    {{ template "navbar" . }}
+
+    <div style="max-width:800px; margin:auto; padding:20px;">
+        <!--<h2>Berita Teknologi</h2>-->
+        <div class="container">
+        {{ range .data }}
+            <div class="news-item">
+                <a href="/berita/{{ .Slug }}" class="news-link">
+                    
+                    <img src="{{ .Gambar }}" class="news-img">
+
+                    <div class="news-content">
+                        <h2>{{ .Judul }}</h2>
+                        <p>{{ excerpt .Isi | safeHTML}}</p>
+                    </div>
+
+                </a>
+            </div>
+
+            <hr>
+        {{ end }}
+        <div class="pagination">
+
+            {{ if gt .page 1 }}
+                <a href="/?page={{ sub .page 1 }}">← Prev</a>
+            {{ end }}
+
+            <span>Page {{ .page }} of {{ .totalPage }}</span>
+
+            {{ if lt .page .totalPage }}
+                <a href="/?page={{ add .page 1 }}">Next →</a>
+            {{ end }}
+
+        </div>
+        </div>
+    </div>
+
+</body>
+</html>

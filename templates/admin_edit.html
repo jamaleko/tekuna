@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Berita</title>
+
+    <!-- TinyMCE -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+
+    <script>
+    tinymce.init({
+        selector: 'textarea',
+        height: 300,
+        plugins: 'lists link image code',
+        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
+    });
+    </script>
+    {{ template "navbar_admin" . }}
+<h2 style="text-align: center;">Edit Berita</h2>
+<div class="container">
+    <form action="/admin/edit/{{ .data.ID }}" method="POST" enctype="multipart/form-data">
+        Judul:<br>
+        <input type="text" name="judul" value="{{ .data.Judul }}"><br><br>
+
+        Isi:<br>
+        <textarea name="isi">{{ .data.Isi }}</textarea><br><br>
+
+        Gambar (opsional):<br>
+        <input type="file" name="gambar"><br><br>
+
+        <button type="submit">Update</button>
+    </form>
+</div>
+</body>
+</html>
