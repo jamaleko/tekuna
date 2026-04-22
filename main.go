@@ -359,6 +359,8 @@ func AuthRequired() gin.HandlerFunc {
 	    }
 	}
 func uploadToSupabase(file multipart.File, filename string) (string, error) {
+	fmt.Println("SUPABASE_URL:", os.Getenv("SUPABASE_URL"))
+    fmt.Println("SUPABASE_KEY:", os.Getenv("SUPABASE_KEY"))
 	url := os.Getenv("SUPABASE_URL") + "/storage/v1/object/images/" + filename
 
 	// baca file jadi byte
