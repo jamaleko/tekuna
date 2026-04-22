@@ -393,7 +393,7 @@ func uploadToSupabase(file multipart.File, filename string) (string, error) {
 		return "", fmt.Errorf("upload gagal")
 	}
 
-	publicURL := os.Getenv("SUPABASE_URL") + "/storage/v1/object/public/images/" + filename
+	publicURL := os.Getenv("SUPABASE_URL") + "/storage/v1/render/image/public/images/" + filename
 
 	return publicURL, nil
 }
