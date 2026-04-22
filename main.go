@@ -361,16 +361,19 @@ func AuthRequired() gin.HandlerFunc {
 func uploadToSupabase(file multipart.File, filename string) (string, error) {
 	url := os.Getenv("SUPABASE_URL") + "/storage/v1/object/images/" + filename
 
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
+	// baca file jadi byte
+	data, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
 
-	part, _ := writer.CreateFormFile("file", filename)
-	io.Copy(part, file)
-	writer.Close()
+	req, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return "", err
+	}
 
-	req, _ := http.NewRequest("POST", url, body)
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("SUPABASE_KEY"))
-	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Content-Type", "application/octet-stream")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -379,7 +382,15 @@ func uploadToSupabase(file multipart.File, filename string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// URL public
+	// debug
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println("STATUS:", resp.Status)
+	fmt.Println("RESP:", string(body))
+
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		return "", fmt.Errorf("upload gagal")
+	}
+
 	publicURL := os.Getenv("SUPABASE_URL") + "/storage/v1/object/public/images/" + filename
 
 	return publicURL, nil
