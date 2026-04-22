@@ -290,17 +290,27 @@ func adminEdit(c *gin.Context) {
 	judul := c.PostForm("judul")
 	isi := c.PostForm("isi")
 
-	file, _ := c.FormFile("gambar")
+	// ambil file (kalau ada)
+	file, header, err := c.Request.FormFile("gambar")
 
-	if file != nil {
-		filename := file.Filename
-		path := "static/images/" + filename
-		c.SaveUploadedFile(file, path)
-		berita.Gambar = "/" + path
+	if err == nil {
+		// buat nama unik
+		filename := strconv.FormatInt(time.Now().Unix(), 10) + "-" + header.Filename
+
+		// upload ke supabase
+		url, err := uploadToSupabase(file, filename)
+		if err != nil {
+			panic(err)
+		}
+
+		// update gambar
+		berita.Gambar = url
 	}
 
+	// update data lain
 	berita.Judul = judul
 	berita.Isi = isi
+	berita.Slug = createSlug(judul)
 
 	db.Save(&berita)
 
