@@ -1,12 +1,9 @@
 package main
 
 import (
-<<<<<<< HEAD
 	"net/http"
 	"fmt"
 	"strconv"
-=======
->>>>>>> 75563f31c84b570b12ecab973e536c8561cd8c91
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
     "github.com/gin-contrib/sessions/cookie"
@@ -15,6 +12,8 @@ import (
 	"regexp"
 	"strings"
 	"html/template"
+	"gorm.io/driver/postgres"
+    "os"
 )
 
 type Berita struct {
@@ -30,13 +29,14 @@ var db *gorm.DB
 func main() {
 	fmt.Println("STEP 1 - START")
 
-<<<<<<< HEAD
 	var err error
 
 	// koneksi database (tanpa gcc)
-	db, err = gorm.Open(sqlite.Open("berita.db"), &gorm.Config{})
+	dsn := os.Getenv("DATABASE_URL")
+
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("gagal konek database")
+	    panic("gagal konek database")
 	}
 
 	fmt.Println("STEP 2 - DB CONNECTED")
@@ -80,6 +80,18 @@ func main() {
 			return s[:120] + "..."
 		}
 			return s
+		},
+		"metaDesc": func(s string) string {
+		    re := regexp.MustCompile("<.*?>")
+		    s = re.ReplaceAllString(s, "")
+		
+		    s = strings.ReplaceAll(s, "\n", " ")
+		    s = strings.ReplaceAll(s, "\r", " ")
+		
+		    if len(s) > 120 {
+		        return s[:120]
+		    }
+		    return s
 		},
 		// 👉 TAMBAHAN UNTUK PAGINATION
 	    "add": func(a, b int) int {
@@ -166,6 +178,8 @@ func main() {
 	        "data":      berita,
 	        "page":      page,
 	        "totalPage": totalPage,
+			"Title": "Tekuna - Portal Berita Teknologi",
+    		"Description": "Portal berita teknologi terbaru Tekuna",
     	})
 	})
 
@@ -181,7 +195,8 @@ func main() {
 
 	c.HTML(http.StatusOK, "detail.html", gin.H{
 		"data": berita,
-		"title": berita.Judul + " - tekuna.my.id",
+		"Title": berita.Judul + " - tekuna.my.id",
+		"Description": berita.Isi,
 		})
 	})
 
@@ -324,56 +339,3 @@ func AuthRequired() gin.HandlerFunc {
 	        c.Next()
 	    }
 	}
-=======
-	r.GET("/", func(c *gin.Context) {
-		c.Data(200, "text/html; charset=utf-8", []byte(`
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tekuna News</title>
-	<meta name="description" content="Portal berita teknologi terbaru">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-
-    <!-- Navbar -->
-    <nav class="bg-blue-600 p-4 text-white text-xl font-bold">
-        Tekuna
-    </nav>
-
-    <!-- Content -->
-    <div class="p-4">
-
-        <h1 class="text-2xl font-bold mb-4">Berita Teknologi</h1>
-
-        <!-- List berita -->
-        <div class="space-y-4">
-
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">Website Tekuna resmi launch 🚀</h2>
-                <p class="text-gray-600">Portal berita teknologi mulai dibangun.</p>
-            </div>
-
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">AI semakin berkembang di 2026 🤖</h2>
-                <p class="text-gray-600">Teknologi AI makin banyak digunakan di berbagai bidang.</p>
-            </div>
-
-            <div class="bg-white p-4 rounded shadow">
-                <h2 class="text-lg font-semibold">Startup Indonesia makin maju 🇮🇩</h2>
-                <p class="text-gray-600">Banyak startup lokal mulai bersaing global.</p>
-            </div>
-
-        </div>
-
-    </div>
-
-</body>
-</html>
-		`))
-	})
-
-	r.Run(":10000")
-}
->>>>>>> 75563f31c84b570b12ecab973e536c8561cd8c91

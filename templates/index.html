@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Tekuna - Portal Berita Teknologi</title>
+    {{ template "head" . }}
     {{ template "navbar" . }}
 
     <div style="max-width:800px; margin:auto; padding:20px;">
@@ -11,7 +10,7 @@
             <div class="news-item">
                 <a href="/berita/{{ .Slug }}" class="news-link">
                     
-                    <img src="{{ .Gambar }}" class="news-img">
+                    <img src="{{ .Gambar }}" loading="lazy" class="news-img">
 
                     <div class="news-content">
                         <h2>{{ .Judul }}</h2>
