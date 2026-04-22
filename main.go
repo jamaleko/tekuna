@@ -14,6 +14,10 @@ import (
 	"html/template"
 	"gorm.io/driver/postgres"
     "os"
+	"bytes"
+	"io"
+	"mime/multipart"
+	"time"
 )
 
 type Berita struct {
@@ -243,18 +247,23 @@ func adminCreate(c *gin.Context) {
 	judul := c.PostForm("judul")
 	isi := c.PostForm("isi")
 
-	file, _ := c.FormFile("gambar")
+	file, header, _ := c.Request.FormFile("gambar")
 
-	filename := file.Filename
-	path := "static/images/" + filename
+	// bikin nama file unik
+	filename := strconv.FormatInt(time.Now().Unix(), 10) + "-" + header.Filename
 
-	c.SaveUploadedFile(file, path)
+	// upload ke supabase
+	url, err := uploadToSupabase(file, filename)
+	if err != nil {
+		panic(err)
+	}
 
+	// simpan ke database
 	db.Create(&Berita{
 		Judul:  judul,
 		Slug:   createSlug(judul),
 		Isi:    isi,
-		Gambar: "/" + path,
+		Gambar: url, // ✅ pakai URL supabase
 	})
 
 	c.Redirect(http.StatusFound, "/admin")
@@ -339,3 +348,29 @@ func AuthRequired() gin.HandlerFunc {
 	        c.Next()
 	    }
 	}
+func uploadToSupabase(file multipart.File, filename string) (string, error) {
+	url := os.Getenv("SUPABASE_URL") + "/storage/v1/object/images/" + filename
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	part, _ := writer.CreateFormFile("file", filename)
+	io.Copy(part, file)
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", url, body)
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("SUPABASE_KEY"))
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// URL public
+	publicURL := os.Getenv("SUPABASE_URL") + "/storage/v1/object/public/images/" + filename
+
+	return publicURL, nil
+}
