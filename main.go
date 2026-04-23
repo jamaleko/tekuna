@@ -345,12 +345,22 @@ func adminEdit(c *gin.Context) {
 	judul := c.PostForm("judul")
 	isi := c.PostForm("isi")
 
+	// generate slug baru
+	slug := createSlug(judul)
+
 	// ambil file (kalau ada)
 	file, header, err := c.Request.FormFile("gambar")
 
 	if err == nil {
-		// buat nama unik
-		filename := strconv.FormatInt(time.Now().Unix(), 10) + "-" + header.Filename
+
+		// ambil extension
+		ext := strings.ToLower(filepath.Ext(header.Filename))
+		if ext == "" {
+			ext = ".jpg"
+		}
+
+		// 🔥 nama file pakai slug + timestamp
+		filename := slug + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ext
 
 		// upload ke supabase
 		url, err := uploadToSupabase(file, filename)
@@ -365,7 +375,7 @@ func adminEdit(c *gin.Context) {
 	// update data lain
 	berita.Judul = judul
 	berita.Isi = isi
-	berita.Slug = createSlug(judul)
+	berita.Slug = slug
 
 	db.Save(&berita)
 
