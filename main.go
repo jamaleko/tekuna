@@ -85,6 +85,36 @@ func main() {
 		}
 			return s
 		},
+		"insertBacaJuga": func(s string, b Berita) template.HTML {
+		    parts := strings.Split(s, "</p>")
+		
+		    if len(parts) < 2 {
+		        return template.HTML(s)
+		    }
+		
+		    mid := len(parts) / 2
+		
+		    bacaHTML := `<div style="background:#f5f5f5;padding:15px;margin:20px 0;border-left:4px solid #007bff;">
+		        <b>Baca juga:</b><br>
+		        <a href="/berita/` + b.Slug + `">` + b.Judul + `</a>
+		    </div>`
+		
+		    var result string
+		
+		    for i, p := range parts {
+		        if strings.TrimSpace(p) == "" {
+		            continue
+		        }
+		
+		        result += p + "</p>"
+		
+		        if i == mid {
+		            result += bacaHTML
+		        }
+		    }
+		
+		    return template.HTML(result)
+		},
 		"metaDesc": func(s string) string {
 		    re := regexp.MustCompile("<.*?>")
 		    s = re.ReplaceAllString(s, "")
@@ -187,21 +217,28 @@ func main() {
     	})
 	})
 
-	// detail berita
 	r.GET("/berita/:slug", func(c *gin.Context) {
-	slug := c.Param("slug")
+    slug := c.Param("slug")
 
-	var berita Berita
-	if err := db.Where("slug = ?", slug).First(&berita).Error; err != nil {
-		c.String(404, "Berita tidak ditemukan")
-		return
-	}
+    var berita Berita
+    if err := db.Where("slug = ?", slug).First(&berita).Error; err != nil {
+        c.String(404, "Berita tidak ditemukan")
+        return
+    }
 
-	c.HTML(http.StatusOK, "detail.html", gin.H{
-		"data": berita,
-		"Title": berita.Judul + " - tekuna.my.id",
-		"Description": berita.Isi,
-		})
+    // 🔥 ambil 1 artikel random selain ini
+    var bacaJuga Berita
+    db.Where("id != ?", berita.ID).
+        Order("RANDOM()").
+        Limit(1).
+        Find(&bacaJuga)
+
+    c.HTML(http.StatusOK, "detail.html", gin.H{
+        "data":        berita,
+        "baca":        bacaJuga, // 👈 kirim ke template
+        "Title":       berita.Judul + " - tekuna.my.id",
+        "Description": berita.Isi,
+	    })
 	})
 
 	fmt.Println("STEP 4 - SERVER RUNNING")
