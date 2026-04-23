@@ -65,14 +65,19 @@ func main() {
         	return template.HTML(s)
 	    },
 	    "excerpt": func(s string) string {
-		// hapus enter
-		s = strings.ReplaceAll(s, "\n", " ")
-
-		// potong 120 karakter
-		if len(s) > 120 {
-			return s[:120] + "..."
-		}
-			return s
+		    // hapus semua tag HTML
+		    re := regexp.MustCompile("<.*?>")
+		    s = re.ReplaceAllString(s, "")
+		
+		    // hapus enter
+		    s = strings.ReplaceAll(s, "\n", " ")
+		    s = strings.ReplaceAll(s, "\r", " ")
+		
+		    // potong
+		    if len(s) > 120 {
+		        return s[:120] + "..."
+		    }
+		    return s
 		},
 		"insertBacaJuga": func(s string, b Berita) template.HTML {
 
