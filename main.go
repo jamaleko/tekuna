@@ -38,7 +38,9 @@ func main() {
 	// koneksi database (tanpa gcc)
 	dsn := os.Getenv("DATABASE_URL")
 
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+	    PrepareStmt: false, // 🔥 INI WAJIB
+	})
 	if err != nil {
 	    panic("gagal konek database")
 	}
