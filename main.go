@@ -80,7 +80,7 @@ func main() {
 		
 		    bacaHTML := `<div style="background:#f5f5f5;padding:15px;margin:20px 0;border-left:4px solid #007bff;">
 		        <b>Baca juga:</b><br>
-		        <a href="/berita/` + b.Slug + `">` + b.Judul + `</a>
+		        <a href="/berita/` + b.Slug + `" style="text-decoration: none;">` + b.Judul + `</a>
 		    </div>`
 		
 		    // 🔥 kalau gagal detect paragraf
