@@ -46,9 +46,9 @@ func main() {
 	}
 	// ✅ TAMBAHKAN DI SINI
 	sqlDB, _ := db.DB()
-	sqlDB.SetMaxIdleConns(5)
-	sqlDB.SetMaxOpenConns(10)
-	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+	sqlDB.SetMaxIdleConns(1)
+	sqlDB.SetMaxOpenConns(1)
+	sqlDB.SetConnMaxLifetime(time.Minute * 5)
 	
 	db.Exec("SELECT 1")
 	fmt.Println("STEP 2 - DB CONNECTED")
