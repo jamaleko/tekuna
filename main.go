@@ -18,6 +18,7 @@ import (
 	"io"
 	"mime/multipart"
 	"time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Berita struct {
@@ -26,6 +27,12 @@ type Berita struct {
 	Slug    string `gorm:"unique"`
 	Isi     string
 	Gambar  string
+}
+
+type User struct {
+	ID       uint   `gorm:"primaryKey"`
+	Username string `gorm:"unique"`
+	Password string // ini hash, bukan plain text
 }
 
 var db *gorm.DB
@@ -45,7 +52,7 @@ func main() {
 	fmt.Println("STEP 2 - DB CONNECTED")
 
 	// migrate tabel
-	db.AutoMigrate(&Berita{})
+	db.AutoMigrate(&Berita{}, &User{})
 
 	fmt.Println("STEP 3 - DATA READY")
 
@@ -136,20 +143,30 @@ func main() {
 	})
 
 	r.POST("/login", func(c *gin.Context) {
-	    username := c.PostForm("username")
-	    password := c.PostForm("password")
-
-	    // simple hardcode dulu
-	    if username == "jamaleko" && password == "badb8poefevU" {
-	        session := sessions.Default(c)
-	        session.Set("user", username)
-	        session.Save()
-
-	        c.Redirect(302, "/admin")
-	        return
-	    }
-
-	    c.String(401, "Login gagal")
+		username := c.PostForm("username")
+		password := c.PostForm("password")
+	
+		var user User
+	
+		// cari user di database
+		if err := db.Where("username = ?", username).First(&user).Error; err != nil {
+			c.String(401, "User tidak ditemukan")
+			return
+		}
+	
+		// bandingkan password hash
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+		if err != nil {
+			c.String(401, "Password salah")
+			return
+		}
+	
+		// login sukses
+		session := sessions.Default(c)
+		session.Set("user", user.Username)
+		session.Save()
+	
+		c.Redirect(302, "/admin")
 	})
 
 	r.GET("/logout", func(c *gin.Context) {
