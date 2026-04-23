@@ -159,6 +159,17 @@ func main() {
 
     c.Redirect(302, "/login")
 	})
+	r.GET("/privacy", func(c *gin.Context) {
+    c.HTML(http.StatusOK, "privacy.html", gin.H{
+        "Title": "Privacy Policy - tekuna.my.id",
+	    })
+	})
+	
+	r.GET("/disclaimer", func(c *gin.Context) {
+	    c.HTML(http.StatusOK, "disclaimer.html", gin.H{
+	        "Title": "Disclaimer - tekuna.my.id",
+	    })
+	})
 	// ======================
 	// ROUTES
 	// ======================
