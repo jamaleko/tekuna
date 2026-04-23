@@ -86,27 +86,25 @@ func main() {
 			return s
 		},
 		"insertBacaJuga": func(s string, b Berita) template.HTML {
-		    parts := strings.Split(s, "</p>")
-		
-		    if len(parts) < 2 {
-		        return template.HTML(s)
-		    }
-		
-		    mid := len(parts) / 2
+
+		    re := regexp.MustCompile(`(?i)<p[^>]*>.*?</p>`)
+		    parts := re.FindAllString(s, -1)
 		
 		    bacaHTML := `<div style="background:#f5f5f5;padding:15px;margin:20px 0;border-left:4px solid #007bff;">
 		        <b>Baca juga:</b><br>
 		        <a href="/berita/` + b.Slug + `">` + b.Judul + `</a>
 		    </div>`
 		
+		    // 🔥 kalau gagal detect paragraf
+		    if len(parts) == 0 {
+		        return template.HTML(s + bacaHTML)
+		    }
+		
+		    mid := len(parts) / 2
+		
 		    var result string
-		
 		    for i, p := range parts {
-		        if strings.TrimSpace(p) == "" {
-		            continue
-		        }
-		
-		        result += p + "</p>"
+		        result += p
 		
 		        if i == mid {
 		            result += bacaHTML
