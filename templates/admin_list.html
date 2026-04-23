@@ -5,7 +5,7 @@
 {{ template "navbar_admin" . }}
 
 {{ range .data }}
-<div class="container">
+<div class="main-container">
     <h2>{{ .Judul }}</h2>
     <a href="/admin/edit/{{ .ID }}">Edit</a> |
     <a href="/admin/delete/{{ .ID }}">Hapus</a>
