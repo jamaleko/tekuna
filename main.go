@@ -36,7 +36,7 @@ func main() {
 	var err error
 
 	// koneksi database (tanpa gcc)
-	dsn := os.Getenv("DATABASE_URL")
+	dsn := os.Getenv("DATABASE_URL") + "&prefer_simple_protocol=true"
 
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 	    PrepareStmt: false, // 🔥 INI WAJIB
