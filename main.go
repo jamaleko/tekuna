@@ -54,24 +54,6 @@ func main() {
 	// migrate tabel
 	db.AutoMigrate(&Berita{})
 
-	// seed data
-	var count int64
-	db.Model(&Berita{}).Count(&count)
-
-	if count == 0 {
-		db.Create(&Berita{
-			Judul:  "Website Tekuna resmi launch 🚀",
-			Isi:    "Portal berita teknologi mulai dibangun.",
-			Gambar: "/static/images/startup.jpg",
-		})
-
-		db.Create(&Berita{
-			Judul:  "AI semakin berkembang di 2026",
-			Isi:    "Teknologi AI makin banyak digunakan di berbagai bidang.",
-			Gambar: "/static/images/ai.jpeg",
-		})
-	}
-
 	fmt.Println("STEP 3 - DATA READY")
 
 	// setup gin
