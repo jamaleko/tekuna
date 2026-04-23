@@ -1,10 +1,12 @@
+/* RESET DASAR */
 body {
     font-family: 'Inter', Arial, sans-serif;
     background-color: #f5f5f5;
     margin: 0;
 }
 
-.container {
+/* ⚠️ GANTI container -> biar ga bentrok Tailwind */
+.main-container {
     max-width: 700px;
     width: 100%;
     margin: auto;
@@ -13,30 +15,34 @@ body {
     box-sizing: border-box;
 }
 
-h1, h2 {
+/* TEXT */
+.main-container h1,
+.main-container h2 {
     font-weight: 700;
 }
 
-h2 {
+.main-container h2 {
     font-size: 20px;
     margin-bottom: 5px;
 }
 
-p {
+.main-container p {
     font-size: 14px;
     line-height: 1.6;
     color: #333;
 }
 
-a {
+/* LINK (jangan global lagi) */
+.main-container a {
     text-decoration: none;
     color: black;
 }
 
-a:hover {
+.main-container a:hover {
     color: red;
 }
 
+/* NAVBAR */
 .navbar {
     background: #2d6cdf;
     color: white;
@@ -58,7 +64,6 @@ a:hover {
 
 .navbar a {
     color: white;
-    text-decoration: none;
     margin-right: 15px;
     font-weight: bold;
 }
@@ -67,12 +72,11 @@ a:hover {
     opacity: 0.8;
 }
 
-/* wrapper item */
+/* NEWS */
 .news-item {
     margin-bottom: 15px;
 }
 
-/* link biar full clickable */
 .news-link {
     display: flex;
     gap: 15px;
@@ -80,7 +84,6 @@ a:hover {
     color: black;
 }
 
-/* gambar kiri */
 .news-img {
     width: 160px;
     height: 100px;
@@ -88,7 +91,6 @@ a:hover {
     border-radius: 6px;
 }
 
-/* teks kanan */
 .news-content {
     flex: 1;
 }
@@ -104,13 +106,14 @@ a:hover {
     color: #555;
 }
 
-/* garis pemisah */
+/* GARIS */
 hr {
     border: none;
     border-top: 1px solid #ddd;
     margin: 15px 0;
 }
 
+/* MOBILE */
 @media (max-width: 600px) {
     .news-link {
         flex-direction: column;
@@ -122,6 +125,7 @@ hr {
     }
 }
 
+/* PAGINATION */
 .pagination {
     text-align: center;
     margin-top: 20px;
@@ -129,7 +133,6 @@ hr {
 
 .pagination a {
     margin: 0 10px;
-    text-decoration: none;
     color: #2d6cdf;
     font-weight: bold;
 }
@@ -138,30 +141,26 @@ hr {
     margin: 0 10px;
 }
 
+/* ADMIN NAVBAR */
 .navbar-admin {
     background: #172847;
     color: white;
     padding: 15px;
 
     display: flex;
-    justify-content: space-between; /* kiri & kanan */
+    justify-content: space-between;
     align-items: center;
 }
 
-/* link umum */
 .navbar-admin a {
     color: white;
-    text-decoration: none;
-    margin-right: 15px;
     font-weight: bold;
 }
 
-/* kiri */
 .nav-left a {
     margin-right: 20px;
 }
 
-/* kanan */
 .nav-right a {
     margin-left: 15px;
 }
