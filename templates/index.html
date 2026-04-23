@@ -11,10 +11,10 @@
             {{ range .data }}
             <div class="mb-4">
 
-                <a href="/berita/{{ .Slug }}" class="flex flex-col sm:flex-row gap-4">
+                <a href="/berita/{{ .Slug }}" class="flex flex-col sm:flex-row gap-4 items-start">
 
                     <img src="{{ .Gambar }}"
-                         class="w-full sm:w-40 h-auto sm:h-24 object-cover rounded-md">
+                         class="w-full sm:w-40 aspect-video object-cover rounded-md">
                 
                     <div>
                         <h2 class="text-lg font-semibold">
