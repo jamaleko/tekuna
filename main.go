@@ -75,31 +75,23 @@ func main() {
 		},
 		"insertBacaJuga": func(s string, b Berita) template.HTML {
 
-		    re := regexp.MustCompile(`(?i)<p[^>]*>.*?</p>`)
-		    parts := re.FindAllString(s, -1)
-		
 		    bacaHTML := `<div style="background:#f5f5f5;padding:15px;margin:20px 0;border-left:4px solid #007bff;">
 		        <b>Baca juga:</b><br>
 		        <a href="/berita/` + b.Slug + `" style="text-decoration: none;">` + b.Judul + `</a>
 		    </div>`
 		
-		    // 🔥 kalau gagal detect paragraf
-		    if len(parts) == 0 {
-		        return template.HTML(s + bacaHTML)
+		    // cari penutup </p> kedua
+		    re := regexp.MustCompile(`</p>`)
+		    indexes := re.FindAllStringIndex(s, -1)
+		
+		    if len(indexes) >= 2 {
+		        pos := indexes[1][1]
+		        s = s[:pos] + bacaHTML + s[pos:]
+		    } else {
+		        s += bacaHTML
 		    }
 		
-		    mid := len(parts) / 2
-		
-		    var result string
-		    for i, p := range parts {
-		        result += p
-		
-		        if i == mid {
-		            result += bacaHTML
-		        }
-		    }
-		
-		    return template.HTML(result)
+		    return template.HTML(s)
 		},
 		"metaDesc": func(s string) string {
 		    re := regexp.MustCompile("<.*?>")
