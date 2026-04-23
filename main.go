@@ -162,12 +162,14 @@ func main() {
 	r.GET("/privacy", func(c *gin.Context) {
     c.HTML(http.StatusOK, "privacy.html", gin.H{
         "Title": "Privacy Policy - tekuna.my.id",
+		"Description": "Kebijakan privasi tekuna.my.id terkait penggunaan data pengguna",
 	    })
 	})
 	
 	r.GET("/disclaimer", func(c *gin.Context) {
 	    c.HTML(http.StatusOK, "disclaimer.html", gin.H{
 	        "Title": "Disclaimer - tekuna.my.id",
+			"Description": "Halaman disclaimer tekuna.my.id menjelaskan batasan tanggung jawab atas informasi yang disajikan di website ini.",
 	    })
 	})
 	// ======================
