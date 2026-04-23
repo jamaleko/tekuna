@@ -3,17 +3,31 @@
     {{ template "head" . }}
     {{ template "navbar" . }}
 
-    <div style="max-width:800px; margin:auto; background:white; padding:20px;">
+    <!-- Wrapper -->
+    <div class="max-w-3xl mx-auto px-4">
 
-        <!--<a href="/">← Kembali</a>-->
-        <div class="container">
-            <h1>{{.data.Judul}}</h1>
+        <!-- Article container (NO rounded biar nyambung navbar) -->
+        <div class="bg-white shadow-sm p-5">
 
-            <img src="{{.data.Gambar}}" style="width:100%; border-radius:10px; margin:10px 0;">
+            <!-- Judul -->
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                {{.data.Judul}}
+            </h1>
 
-            {{insertBacaJuga .data.Isi .baca}}
+            <!-- Gambar -->
+            <img 
+                src="{{.data.Gambar}}" 
+                class="w-full mt-4 mb-4 object-cover"
+            >
+
+            <!-- Isi Artikel -->
+            <div class="prose max-w-none text-gray-800">
+                {{insertBacaJuga .data.Isi .baca}}
+            </div>
+
         </div>
     </div>
-{{ template "footer" . }}
+
+    {{ template "footer" . }}
 </body>
 </html>
