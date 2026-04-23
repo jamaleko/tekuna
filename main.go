@@ -36,21 +36,12 @@ func main() {
 	var err error
 
 	// koneksi database (tanpa gcc)
-	dsn := os.Getenv("DATABASE_URL") + "&prefer_simple_protocol=true"
+	dsn := os.Getenv("DATABASE_URL")
 
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
-	    PrepareStmt: false, // 🔥 INI WAJIB
-	})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 	    panic("gagal konek database")
 	}
-	// ✅ TAMBAHKAN DI SINI
-	sqlDB, _ := db.DB()
-	sqlDB.SetMaxIdleConns(1)
-	sqlDB.SetMaxOpenConns(1)
-	sqlDB.SetConnMaxLifetime(time.Minute * 5)
-	
-	db.Exec("SELECT 1")
 	fmt.Println("STEP 2 - DB CONNECTED")
 
 	// migrate tabel
