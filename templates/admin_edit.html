@@ -14,21 +14,64 @@
         toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code'
     });
     </script>
-    {{ template "navbar_admin" . }}
-<h2 style="text-align: center;">Edit Berita</h2>
-<div class="container">
-    <form action="/admin/edit/{{ .data.ID }}" method="POST" enctype="multipart/form-data">
-        Judul:<br>
-        <input type="text" name="judul" value="{{ .data.Judul }}"><br><br>
 
-        Isi:<br>
-        <textarea name="isi">{{ .data.Isi }}</textarea><br><br>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-        Gambar (opsional):<br>
-        <input type="file" name="gambar"><br><br>
+{{ template "navbar_admin" . }}
 
-        <button type="submit">Update</button>
-    </form>
+<div class="max-w-3xl mx-auto px-4 py-6">
+
+    <!-- Card -->
+    <div class="bg-white shadow-sm p-6">
+
+        <h2 class="text-xl font-bold text-gray-800 mb-6 text-center">
+            Edit Berita
+        </h2>
+
+        <form action="/admin/edit/{{ .data.ID }}" 
+              method="POST" 
+              enctype="multipart/form-data"
+              class="space-y-5">
+
+            <!-- Judul -->
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">
+                    Judul
+                </label>
+                <input type="text" name="judul"
+                       value="{{ .data.Judul }}"
+                       class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Isi -->
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">
+                    Isi
+                </label>
+                <textarea name="isi" class="w-full">
+{{ .data.Isi }}
+                </textarea>
+            </div>
+
+            <!-- Gambar -->
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">
+                    Gambar (opsional)
+                </label>
+                <input type="file" name="gambar"
+                       class="w-full text-sm">
+            </div>
+
+            <!-- Button -->
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded-md font-semibold hover:bg-blue-700 transition">
+                Update
+            </button>
+
+        </form>
+
+    </div>
 </div>
 </body>
 </html>
