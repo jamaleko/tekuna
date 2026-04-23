@@ -5,27 +5,68 @@
 {{ template "navbar_admin" . }}
 
 {{ range .data }}
-<div class="container">
-    <h2>{{ .Judul }}</h2>
-    <a href="/admin/edit/{{ .ID }}">Edit</a> |
-    <a href="/admin/delete/{{ .ID }}">Hapus</a>
-    <hr>
-</div>
-{{ end }}
-<div class="container">
-    <div class="pagination">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Tekuna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-        {{ if gt .page 1 }}
-            <a href="/admin?page={{ sub .page 1 }}">← Prev</a>
-        {{ end }}
+{{ template "navbar_admin" . }}
 
-        <span>Page {{ .page }} / {{ .totalPage }}</span>
+    <div class="max-w-3xl mx-auto px-4 py-6">
 
-        {{ if lt .page .totalPage }}
-            <a href="/admin?page={{ add .page 1 }}">Next →</a>
-        {{ end }}
+        <!-- Card putih -->
+        <div class="bg-white shadow-sm p-5">
 
+            {{ range .data }}
+            <div class="mb-4">
+
+                <h2 class="text-lg font-semibold text-gray-900">
+                    {{ .Judul }}
+                </h2>
+
+                <div class="mt-1 text-sm">
+                    <a href="/admin/edit/{{ .ID }}" 
+                       class="text-blue-600 hover:underline">
+                        Edit
+                    </a>
+                    |
+                    <a href="/admin/delete/{{ .ID }}" 
+                       class="text-red-600 hover:underline">
+                        Hapus
+                    </a>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-gray-200 mt-4"></div>
+            </div>
+            {{ end }}
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center gap-4 mt-6 text-sm">
+
+                {{ if gt .page 1 }}
+                <a href="/admin?page={{ sub .page 1 }}"
+                   class="text-blue-600 font-semibold hover:underline">
+                    ← Prev
+                </a>
+                {{ end }}
+
+                <span class="text-gray-600">
+                    Page {{ .page }} / {{ .totalPage }}
+                </span>
+
+                {{ if lt .page .totalPage }}
+                <a href="/admin?page={{ add .page 1 }}"
+                   class="text-blue-600 font-semibold hover:underline">
+                    Next →
+                </a>
+                {{ end }}
+
+            </div>
+
+        </div>
     </div>
-</div>
 </body>
 </html>
