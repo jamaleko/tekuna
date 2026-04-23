@@ -11,23 +11,21 @@
             {{ range .data }}
             <div class="mb-4">
 
-                <a href="/berita/{{ .Slug }}" class="flex gap-4 group">
+                <a href="/berita/{{ .Slug }}" class="flex flex-col sm:flex-row gap-4">
 
-                    <!-- Gambar -->
-                    <img src="{{ .Gambar }}" loading="lazy"
-                        class="w-40 h-24 object-cover rounded-md flex-shrink-0">
-
-                    <!-- Konten -->
-                    <div class="flex-1">
-                        <h2 class="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition">
+                    <img src="{{ .Gambar }}"
+                         class="w-full sm:w-40 h-auto sm:h-24 object-cover rounded-md">
+                
+                    <div>
+                        <h2 class="text-lg font-semibold">
                             {{ .Judul }}
                         </h2>
-
-                        <p class="text-sm text-gray-600 mt-1">
+                
+                        <p class="text-sm text-gray-600">
                             {{ excerpt .Isi | safeHTML }}
                         </p>
                     </div>
-
+                
                 </a>
 
                 <!-- Divider -->
