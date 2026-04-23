@@ -11,7 +11,7 @@
 
             <img src="{{.data.Gambar}}" style="width:100%; border-radius:10px; margin:10px 0;">
 
-            <p>{{.data.Isi | safeHTML}}</p>
+            <p>{{insertBacaJuga .data.Isi .baca}}</p>
         </div>
     </div>
 
