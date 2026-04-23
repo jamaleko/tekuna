@@ -19,6 +19,7 @@ import (
 	"mime/multipart"
 	"time"
 	"golang.org/x/crypto/bcrypt"
+	"path/filepath"
 )
 
 type Berita struct {
@@ -288,7 +289,18 @@ func adminCreate(c *gin.Context) {
 	file, header, _ := c.Request.FormFile("gambar")
 
 	// bikin nama file unik
-	filename := strconv.FormatInt(time.Now().Unix(), 10) + "-" + header.Filename
+	slug := createSlug(judul)
+
+	// ambil extension (.jpg, .png, dll)
+	ext := filepath.Ext(header.Filename)
+	
+	// fallback kalau tidak ada extension
+	if ext == "" {
+	    ext = ".jpg"
+	}
+	
+	// nama file = slug + extension
+	filename := slug + "-" + strconv.FormatInt(time.Now().Unix(), 10) + ext
 
 	// upload ke supabase
 	url, err := uploadToSupabase(file, filename)
