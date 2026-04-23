@@ -42,7 +42,13 @@ func main() {
 	if err != nil {
 	    panic("gagal konek database")
 	}
-
+	// ✅ TAMBAHKAN DI SINI
+	sqlDB, _ := db.DB()
+	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
+	
+	db.Exec("SELECT 1")
 	fmt.Println("STEP 2 - DB CONNECTED")
 
 	// migrate tabel
