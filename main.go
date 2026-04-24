@@ -21,6 +21,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"path/filepath"
 	"html"
+	"encoding/xml"
 )
 
 type Berita struct {
@@ -233,32 +234,32 @@ func main() {
 	    })
 	})
 	r.GET("/sitemap.xml", func(c *gin.Context) {
-		var urls []URL
+	    var urls []URL
+	    baseURL := "https://tekuna.my.id"
 	
-		baseURL := "https://tekuna.my.id"
+	    urls = append(urls, URL{Loc: baseURL + "/"})
+	    urls = append(urls, URL{Loc: baseURL + "/privacy"})
+	    urls = append(urls, URL{Loc: baseURL + "/disclaimer"})
 	
-		// 🔹 halaman statis
-		urls = append(urls, URL{Loc: baseURL + "/"})
-		urls = append(urls, URL{Loc: baseURL + "/privacy"})
-		urls = append(urls, URL{Loc: baseURL + "/disclaimer"})
+	    var berita []Berita
+	    db.Find(&berita)
 	
-		// 🔹 ambil semua berita dari DB
-		var berita []Berita
-		db.Find(&berita)
+	    for _, b := range berita {
+	        urls = append(urls, URL{
+	            Loc:     baseURL + "/berita/" + b.Slug,
+	            LastMod: time.Now().Format("2006-01-02"),
+	        })
+	    }
 	
-		for _, b := range berita {
-			urls = append(urls, URL{
-				Loc:     baseURL + "/berita/" + b.Slug,
-				LastMod: time.Now().Format("2006-01-02"),
-			})
-		}
+	    sitemap := URLSet{
+	        Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+	        URLs:  urls,
+	    }
 	
-		// 🔹 buat XML
-		c.Header("Content-Type", "application/xml")
-		c.XML(200, URLSet{
-			Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-			URLs:  urls,
-		})
+	    output, _ := xml.MarshalIndent(sitemap, "", "  ")
+	
+	    c.Header("Content-Type", "application/xml; charset=utf-8")
+	    c.String(200, xml.Header+string(output))
 	})
 	// ======================
 	// ROUTES
