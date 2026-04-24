@@ -36,7 +36,18 @@ type User struct {
 	Username string `gorm:"unique"`
 	Password string // ini hash, bukan plain text
 }
+type URL struct {
+	Loc     string `xml:"loc"`
+	LastMod string `xml:"lastmod,omitempty"`
+}
 
+type URLSet struct {
+	XMLName xmlns `xml:"urlset"`
+	Xmlns   string `xml:"xmlns,attr"`
+	URLs    []URL `xml:"url"`
+}
+
+type xmlns struct{}
 var db *gorm.DB
 
 func main() {
@@ -198,6 +209,34 @@ func main() {
 	        "Title": "Disclaimer - tekuna.my.id",
 			"Description": "Halaman disclaimer tekuna.my.id menjelaskan batasan tanggung jawab atas informasi yang disajikan di website ini.",
 	    })
+	})
+	r.GET("/sitemap.xml", func(c *gin.Context) {
+		var urls []URL
+	
+		baseURL := "https://tekuna.my.id"
+	
+		// 🔹 halaman statis
+		urls = append(urls, URL{Loc: baseURL + "/"})
+		urls = append(urls, URL{Loc: baseURL + "/privacy"})
+		urls = append(urls, URL{Loc: baseURL + "/disclaimer"})
+	
+		// 🔹 ambil semua berita dari DB
+		var berita []Berita
+		db.Find(&berita)
+	
+		for _, b := range berita {
+			urls = append(urls, URL{
+				Loc:     baseURL + "/berita/" + b.Slug,
+				LastMod: time.Now().Format("2006-01-02"),
+			})
+		}
+	
+		// 🔹 buat XML
+		c.Header("Content-Type", "application/xml")
+		c.XML(200, URLSet{
+			Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+			URLs:  urls,
+		})
 	})
 	// ======================
 	// ROUTES
