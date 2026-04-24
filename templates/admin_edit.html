@@ -10,19 +10,57 @@
         tinymce.init({
         selector: 'textarea',
         height: 300,
+    
         plugins: 'lists link image code paste',
-        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image | code',
     
-        // 🔥 ini penting
+        toolbar: 'undo redo | bold italic | h2 h3 | alignleft aligncenter alignright | bullist numlist | link image | code',
+    
+        contextmenu: false, // 🔥 penting untuk HP
+        browser_spellcheck: true,
+    
         paste_as_text: false,
+        paste_data_images: true,
     
-        // 🔥 buang atribut aneh
+        // 🔥 whitelist tag bersih
         extended_valid_elements: 'h1,h2,h3,h4,h5,h6,p,ul,ol,li,a[href|target],strong,em,br,img[src|alt]',
     
-        // 🔥 bersihin otomatis
+        // 🔥 bersihin HTML dari ChatGPT / web lain
         paste_preprocess: function(plugin, args) {
-            // hapus semua atribut data-*
-            args.content = args.content.replace(/data-[^=]+="[^"]*"/g, '');
+            let content = args.content;
+    
+            // hapus atribut data-*
+            content = content.replace(/data-[^=]+="[^"]*"/g, '');
+    
+            // hapus class & style
+            content = content.replace(/class="[^"]*"/g, '');
+            content = content.replace(/style="[^"]*"/g, '');
+    
+            // hapus span kosong
+            content = content.replace(/<\/?span[^>]*>/g, '');
+    
+            args.content = content;
+        },
+    
+        mobile: {
+            toolbar: 'undo redo | h2 h3 | bullist numlist | bold italic'
+        },
+    
+        setup: function(editor) {
+    
+            editor.ui.registry.addButton('h2', {
+                text: 'H2',
+                onAction: function() {
+                    editor.execCommand('FormatBlock', false, 'h2');
+                }
+            });
+    
+            editor.ui.registry.addButton('h3', {
+                text: 'H3',
+                onAction: function() {
+                    editor.execCommand('FormatBlock', false, 'h3');
+                }
+            });
+    
         }
     });
     </script>
