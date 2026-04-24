@@ -20,6 +20,7 @@ import (
 	"time"
 	"golang.org/x/crypto/bcrypt"
 	"path/filepath"
+	"html"
 )
 
 type Berita struct {
@@ -65,13 +66,17 @@ func main() {
         	return template.HTML(s)
 	    },
 	    "excerpt": func(s string) string {
-		    // hapus semua tag HTML
+		    // hapus tag HTML
 		    re := regexp.MustCompile("<.*?>")
 		    s = re.ReplaceAllString(s, "")
 		
-		    // hapus enter
+		    // decode HTML entity (&nbsp; &ldquo; dll)
+		    s = html.UnescapeString(s)
+		
+		    // rapikan spasi
 		    s = strings.ReplaceAll(s, "\n", " ")
 		    s = strings.ReplaceAll(s, "\r", " ")
+		    s = strings.ReplaceAll(s, "\u00a0", " ") // nbsp jadi spasi
 		
 		    // potong
 		    if len(s) > 120 {
