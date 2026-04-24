@@ -10,18 +10,39 @@
         tinymce.init({
     selector: 'textarea',
     height: 300,
+
     plugins: 'lists link image code paste',
 
-    toolbar: 'undo redo | bold italic | bullist numlist | link image | code',
+    toolbar: 'undo redo | bold italic | h2 h3 | bullist numlist | link image | code',
 
-    contextmenu: false, // 🔥 penting
+    contextmenu: false, // 🔥 penting biar paste HP jalan
     browser_spellcheck: true,
 
     paste_as_text: false,
     paste_data_images: true,
 
     mobile: {
-        toolbar: 'undo redo | bold italic | bullist numlist'
+        toolbar: 'undo redo | h2 h3 | bullist numlist | bold italic'
+    },
+
+    setup: function(editor) {
+
+        // tombol H2
+        editor.ui.registry.addButton('h2', {
+            text: 'H2',
+            onAction: function() {
+                editor.execCommand('FormatBlock', false, 'h2');
+            }
+        });
+
+        // tombol H3
+        editor.ui.registry.addButton('h3', {
+            text: 'H3',
+            onAction: function() {
+                editor.execCommand('FormatBlock', false, 'h3');
+            }
+        });
+
     }
 });
     </script>
