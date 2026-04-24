@@ -92,15 +92,22 @@ func main() {
 		    </div>`
 		
 		    // cari penutup </p> kedua
-		    re := regexp.MustCompile(`</p>`)
-		    indexes := re.FindAllStringIndex(s, -1)
-		
-		    if len(indexes) >= 2 {
-		        pos := indexes[1][1]
-		        s = s[:pos] + bacaHTML + s[pos:]
-		    } else {
-		        s += bacaHTML
-		    }
+		    re := regexp.MustCompile(`(?i)</p>`)
+				indexes := re.FindAllStringIndex(s, -1)
+				
+				if len(indexes) > 0 {
+				    mid := (len(indexes) + 1) / 2
+				
+				    // hati-hati index array (mulai dari 0)
+				    if mid >= len(indexes) {
+				        mid = len(indexes) - 1
+				    }
+				
+				    pos := indexes[mid][1]
+				    s = s[:pos] + bacaHTML + s[pos:]
+				} else {
+				    s += bacaHTML
+				}
 		
 		    return template.HTML(s)
 		},
