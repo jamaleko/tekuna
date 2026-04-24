@@ -72,6 +72,7 @@ func main() {
 	// setup gin
 	r := gin.Default()
 	r.Static("/static", "./static")
+	r.StaticFile("/robots.txt", "./robots.txt")
 	r.SetFuncMap(template.FuncMap{
     	"safeHTML": func(s string) template.HTML {
         	return template.HTML(s)
