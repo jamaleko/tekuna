@@ -125,15 +125,35 @@ func main() {
 		    return template.HTML(s)
 		},
 		"metaDesc": func(s string) string {
+		    // 1. hapus tag HTML
 		    re := regexp.MustCompile("<.*?>")
 		    s = re.ReplaceAllString(s, "")
 		
+		    // 2. decode HTML entity (&nbsp; &ldquo; dll)
+		    s = html.UnescapeString(s)
+		
+		    // 3. hapus karakter aneh (quotes dll)
+		    s = strings.ReplaceAll(s, `"`, "")
+		    s = strings.ReplaceAll(s, `'`, "")
+		    s = strings.ReplaceAll(s, "“", "")
+		    s = strings.ReplaceAll(s, "”", "")
+		
+		    // 4. rapikan spasi
 		    s = strings.ReplaceAll(s, "\n", " ")
 		    s = strings.ReplaceAll(s, "\r", " ")
+		    s = strings.ReplaceAll(s, "\u00a0", " ") // nbsp
 		
-		    if len(s) > 120 {
-		        return s[:120]
+		    reSpace := regexp.MustCompile(`\s+`)
+		    s = reSpace.ReplaceAllString(s, " ")
+		
+		    // 5. trim
+		    s = strings.TrimSpace(s)
+		
+		    // 6. potong
+		    if len(s) > 150 {
+		        return s[:150]
 		    }
+		
 		    return s
 		},
 		// 👉 TAMBAHAN UNTUK PAGINATION
