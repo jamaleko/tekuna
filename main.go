@@ -297,6 +297,7 @@ func main() {
 	        "totalPage": totalPage,
 			"Title": "Tekuna - Portal Berita Teknologi",
     		"Description": "Portal berita teknologi terbaru Tekuna",
+			"Image": "https://sjhqjzxylogbmsshixke.supabase.co/storage/v1/object/public/images/logo.png", // ✅ WAJIB
     	})
 	})
 
@@ -328,6 +329,7 @@ func main() {
         "latest":      latest, // 👈 TAMBAHAN
         "Title":       berita.Judul + " - tekuna.my.id",
         "Description": berita.Isi,
+		"Image":       berita.Gambar, // ✅
 	    })
 	})
 
