@@ -258,13 +258,22 @@ func main() {
 
     c.Header("Content-Type", "application/xml")
 
-    // 🔥 TAMBAHAN PENTING
+    // 🔥 WAJIB: tulis XML header
     c.Writer.Write([]byte(xml.Header))
 
-    c.XML(200, URLSet{
+    // 🔥 encode manual
+    encoder := xml.NewEncoder(c.Writer)
+    encoder.Indent("", "  ")
+
+    err := encoder.Encode(URLSet{
         Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
         URLs:  urls,
     })
+
+    if err != nil {
+        c.String(500, "Error generate sitemap")
+        return
+    }
 })
 	// ======================
 	// ROUTES
