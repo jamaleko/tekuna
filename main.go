@@ -74,21 +74,7 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
-	r.Use(func(c *gin.Context) {
-    if c.Request.Method == "HEAD" {
-        // ubah HEAD jadi GET
-        c.Request.Method = "GET"
-
-        // jalankan handler seperti biasa
-        c.Next()
-
-        // buang body (HEAD tidak boleh ada body)
-        c.Writer.WriteHeaderNow()
-        return
-    }
-
-    c.Next()
-})
+	
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
@@ -281,7 +267,31 @@ func main() {
 	// ======================
 	// ROUTES
 	// ======================
+    // WAJIB
+r.HEAD("/", func(c *gin.Context) {
+    c.Status(200)
+})
 
+r.HEAD("/berita/:slug", func(c *gin.Context) {
+    c.Status(200)
+})
+
+r.HEAD("/sitemap.xml", func(c *gin.Context) {
+    c.Status(200)
+})
+
+// OPSIONAL
+r.HEAD("/privacy", func(c *gin.Context) {
+    c.Status(200)
+})
+
+r.HEAD("/disclaimer", func(c *gin.Context) {
+    c.Status(200)
+})
+
+r.HEAD("/robots.txt", func(c *gin.Context) {
+    c.Status(200)
+})
 	// homepage
 	r.GET("/", func(c *gin.Context) {
 		var berita []Berita
