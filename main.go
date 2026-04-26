@@ -74,6 +74,21 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
+	r.Use(func(c *gin.Context) {
+    if c.Request.Method == "HEAD" {
+        // ubah HEAD jadi GET
+        c.Request.Method = "GET"
+
+        // jalankan handler seperti biasa
+        c.Next()
+
+        // buang body (HEAD tidak boleh ada body)
+        c.Writer.WriteHeaderNow()
+        return
+    }
+
+    c.Next()
+})
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
