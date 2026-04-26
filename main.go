@@ -57,10 +57,10 @@ func main() {
 
 	// koneksi database (tanpa gcc)
 	dsn := os.Getenv("DATABASE_URL")
-	if dsn == "" {
+	/*if dsn == "" {
 	    // 🔥 fallback untuk lokal
 	    dsn = "host=localhost user=postgres password=123 dbname=tekuna port=5432 sslmode=disable"
-	}
+	}*/
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 	    panic("gagal konek database")
