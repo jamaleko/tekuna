@@ -21,6 +21,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"path/filepath"
 	"html"
+	"encoding/xml"
 )
 
 type Berita struct {
