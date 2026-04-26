@@ -237,34 +237,34 @@ func main() {
 	    })
 	})
 	r.GET("/sitemap.xml", func(c *gin.Context) {
-		var urls []URL
-	
-		baseURL := "https://tekuna.my.id"
-	
-		// 🔹 halaman statis
-		urls = append(urls, URL{Loc: baseURL + "/"})
-		urls = append(urls, URL{Loc: baseURL + "/privacy"})
-		urls = append(urls, URL{Loc: baseURL + "/disclaimer"})
-	
-		// 🔹 ambil semua berita dari DB
-		var berita []Berita
-		db.Find(&berita)
-	
-		for _, b := range berita {
-			urls = append(urls, URL{
-				Loc:     baseURL + "/berita/" + b.Slug,
-				LastMod: time.Now().Format("2006-01-02"),
-			})
-		}
-	
-		// 🔹 buat XML
-		c.Header("Content-Type", "application/xml")
-		c.Writer.Write([]byte(xml.Header))
-		c.XML(200, URLSet{
-			Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-			URLs:  urls,
-		})
-	})
+    var urls []URL
+
+    baseURL := "https://tekuna.my.id"
+
+    urls = append(urls, URL{Loc: baseURL + "/"})
+    urls = append(urls, URL{Loc: baseURL + "/privacy"})
+    urls = append(urls, URL{Loc: baseURL + "/disclaimer"})
+
+    var berita []Berita
+    db.Find(&berita)
+
+    for _, b := range berita {
+        urls = append(urls, URL{
+            Loc:     baseURL + "/berita/" + b.Slug,
+            LastMod: time.Now().Format("2006-01-02"),
+        })
+    }
+
+    c.Header("Content-Type", "application/xml")
+
+    // 🔥 TAMBAHAN PENTING
+    c.Writer.Write([]byte(xml.Header))
+
+    c.XML(200, URLSet{
+        Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+        URLs:  urls,
+    })
+})
 	// ======================
 	// ROUTES
 	// ======================
