@@ -288,10 +288,6 @@ r.HEAD("/privacy", func(c *gin.Context) {
 r.HEAD("/disclaimer", func(c *gin.Context) {
     c.Status(200)
 })
-
-r.HEAD("/robots.txt", func(c *gin.Context) {
-    c.Status(200)
-})
 	// homepage
 	r.GET("/", func(c *gin.Context) {
 		var berita []Berita
