@@ -259,6 +259,7 @@ func main() {
 	
 		// 🔹 buat XML
 		c.Header("Content-Type", "application/xml")
+		c.Writer.Write([]byte(xml.Header))
 		c.XML(200, URLSet{
 			Xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
 			URLs:  urls,
