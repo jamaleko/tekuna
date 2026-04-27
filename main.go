@@ -57,7 +57,7 @@ func main() {
 	var err error
 
 	// koneksi database (tanpa gcc)
-	dsn := os.Getenv("DATABASE_URL")
+	//dsn := os.Getenv("DATABASE_URL")
 	/*if dsn == "" {
 	    // 🔥 fallback untuk lokal
 	    dsn = "host=localhost user=postgres password=123 dbname=tekuna port=5432 sslmode=disable"
