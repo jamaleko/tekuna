@@ -6,48 +6,55 @@
     <!-- Wrapper -->
     <div class="max-w-3xl mx-auto px-4">
 
-        <!-- Article container (NO rounded biar nyambung navbar) -->
+        <!-- Article container -->
         <div class="bg-white shadow-sm p-5">
 
             <!-- Judul -->
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
                 {{.data.Judul}}
             </h1>
-            <div class="flex items-center gap-3 mt-4 mb-4">
 
-                <!-- Tulisan -->
-                <span class="text-sm text-gray-500 font-semibold">
-                    Bagikan:
-                </span>
+            <!-- TANGGAL + SHARE -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mt-4 mb-4 gap-3">
 
-                <!-- WhatsApp -->
-                <a 
-                    href="https://api.whatsapp.com/send?text={{.data.Judul}} - {{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
-                    target="_blank"
-                    class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full text-sm"
-                >
-                    WhatsApp
-                </a>
+                <!-- SHARE (mobile atas, desktop kanan) -->
+                <div class="flex items-center gap-2 flex-wrap order-1 md:order-2">
+                    <span class="text-sm text-gray-500 font-semibold">Share :</span>
 
-                <!-- Facebook -->
-                <a 
-                    href="https://www.facebook.com/sharer/sharer.php?u={{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
-                    target="_blank"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full text-sm"
-                >
-                    Facebook
-                </a>
+                    <a 
+                        href="https://api.whatsapp.com/send?text={{.data.Judul}} - {{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
+                        target="_blank"
+                        class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full text-sm"
+                    >
+                        WhatsApp
+                    </a>
 
-                <!-- X -->
-                <a 
-                    href="https://twitter.com/intent/tweet?text={{.data.Judul}}&url={{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
-                    target="_blank"
-                    class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-full text-sm"
-                >
-                    X
-                </a>
+                    <a 
+                        href="https://www.facebook.com/sharer/sharer.php?u={{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
+                        target="_blank"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-full text-sm"
+                    >
+                        Facebook
+                    </a>
+
+                    <a 
+                        href="https://twitter.com/intent/tweet?text={{.data.Judul}}&url={{printf `%s/berita/%s` `https://tekuna.my.id` .data.Slug}}"
+                        target="_blank"
+                        class="bg-black hover:bg-gray-800 text-white px-3 py-1.5 rounded-full text-sm"
+                    >
+                        X
+                    </a>
+                </div>
+
+                <!-- TANGGAL (mobile bawah, desktop kiri) -->
+                <div class="text-sm text-gray-500 order-2 md:order-1">
+                    {{ if not .data.Tanggal.IsZero }}
+                        <i>Publish :</i> {{ relativeTime .data.Tanggal }}
+                    {{ end }}
+                </div>
 
             </div>
+
             <!-- Gambar -->
             <img 
                 src="{{.data.Gambar}}" 
@@ -59,27 +66,14 @@
             <div class="prose max-w-none text-gray-800">
                 {{insertBacaJuga .data.Isi .baca}}
             </div>
-            <!-- BERITA TERBARU -->
+
+            <!-- BERITA LAINNYA -->
             <div class="mt-10">
                 <div class="flex items-center my-10">
                     <div class="flex-grow border-t"></div>
                     <span class="mx-4 text-sm text-gray-400">Berita Lainnya</span>
                     <div class="flex-grow border-t"></div>
                 </div>
-                <!--<h2 class="text-xl font-bold mb-5 border-b pb-2 flex items-center gap-2">
-
-                    <svg xmlns="http://www.w3.org/2000/svg" 
-                         fill="none" 
-                         viewBox="0 0 24 24" 
-                         stroke-width="2" 
-                         stroke="currentColor" 
-                         class="w-5 h-5 text-orange-500">
-                        <path stroke-linecap="round" stroke-linejoin="round" 
-                              d="M12 3c1.5 3 4 4.5 4 8a4 4 0 11-8 0c0-2.5 2.5-5 4-8z" />
-                    </svg>
-
-                    Berita Terbaru
-                </h2>-->
 
                 <div class="space-y-4">
 
