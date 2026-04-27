@@ -30,6 +30,7 @@ type Berita struct {
 	Slug    string `gorm:"unique"`
 	Isi     string
 	Gambar  string
+	Tanggal time.Time // ✅ tambah ini
 }
 
 type User struct {
@@ -133,6 +134,46 @@ func main() {
 				}
 		
 		    return template.HTML(s)
+		},
+		"relativeTime": func(t time.Time) string {
+			if t.IsZero() {
+				return ""
+			}
+
+			diff := time.Since(t)
+
+			// fungsi bulan indo
+			bulan := []string{
+				"Januari", "Februari", "Maret", "April",
+				"Mei", "Juni", "Juli", "Agustus",
+				"September", "Oktober", "November", "Desember",
+			}
+
+			// kalau lebih dari 24 jam
+			if diff.Hours() >= 24 {
+				return fmt.Sprintf("%d %s %d",
+					t.Day(),
+					bulan[int(t.Month())-1],
+					t.Year(),
+				)
+			}
+
+			hours := int(diff.Hours())
+			if hours > 0 {
+				return fmt.Sprintf("%d jam lalu", hours)
+			}
+
+			minutes := int(diff.Minutes())
+			if minutes > 0 {
+				return fmt.Sprintf("%d menit lalu", minutes)
+			}
+
+			seconds := int(diff.Seconds())
+			if seconds < 5 {
+				return "baru saja"
+			}
+
+			return fmt.Sprintf("%d detik lalu", seconds)
 		},
 		"metaDesc": func(s string) string {
 		    // 1. hapus tag HTML
@@ -441,6 +482,7 @@ func adminCreate(c *gin.Context) {
 		Slug:   createSlug(judul),
 		Isi:    isi,
 		Gambar: url, // ✅ pakai URL supabase
+		Tanggal: time.Now(), // ✅ isi otomatis
 	})
 
 	c.Redirect(http.StatusFound, "/admin")
