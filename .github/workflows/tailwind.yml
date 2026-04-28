@@ -15,9 +15,11 @@ jobs:
         with:
           node-version: 18
 
-      - run: npm install -D tailwindcss
+      # 🔥 install tailwind + CLI fix
+      - run: npm install -D tailwindcss@3.4.3
 
-      - run: ./node_modules/.bin/tailwindcss -i ./input.css -o ./static/css/style.css --minify
+      # 🔥 build pakai npx (akan jalan)
+      - run: npx tailwindcss -i ./input.css -o ./static/css/style.css --minify
 
       - name: Commit CSS
         run: |
