@@ -384,9 +384,18 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 
     var berita Berita
     if err := db.Where("slug = ?", slug).First(&berita).Error; err != nil {
-        c.String(404, "Berita tidak ditemukan")
-        return
-    }
+
+	    var latest []Berita
+	    db.Order("id desc").Limit(5).Find(&latest)
+	
+	    c.HTML(404, "empty.html", gin.H{
+	        "Title": "Berita tidak ditemukan",
+	        "Description": "Berita tidak ditemukan",
+	        "Message": "Berita tidak ditemukan",
+	        "latest": latest, // 🔥 kirim ke template
+	    })
+	    return
+	}
 
     // 🔥 ambil 1 artikel random selain ini
     var bacaJuga Berita
@@ -410,7 +419,18 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		"Image":       berita.Gambar, // ✅
 	    })
 	})
+	r.NoRoute(func(c *gin.Context) {
 
+	    var latest []Berita
+	    db.Order("id desc").Limit(5).Find(&latest)
+	
+	    c.HTML(404, "empty.html", gin.H{
+	        "Title": "404 - Halaman tidak ditemukan",
+	        "Description": "Halaman tidak ditemukan",
+	        "Message": "404 page not found",
+	        "latest": latest, // 🔥 sama
+	    })
+	})
 	fmt.Println("STEP 4 - SERVER RUNNING")
 
 	// run server
