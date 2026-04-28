@@ -298,7 +298,7 @@ func main() {
     for _, b := range berita {
         urls = append(urls, URL{
             Loc:     baseURL + "/berita/" + b.Slug,
-            LastMod: time.Now().Format("2006-01-02"),
+            LastMod: b.Tanggal.Format("2006-01-02"),
         })
     }
 
@@ -325,7 +325,7 @@ func main() {
 	// ROUTES
 	// ======================
     // WAJIB
-r.HEAD("/", func(c *gin.Context) {
+/*r.HEAD("/", func(c *gin.Context) {
     c.Status(200)
 })
 
@@ -344,7 +344,7 @@ r.HEAD("/privacy", func(c *gin.Context) {
 
 r.HEAD("/disclaimer", func(c *gin.Context) {
     c.Status(200)
-})
+})*/
 	// homepage
 	r.GET("/", func(c *gin.Context) {
 		var berita []Berita
