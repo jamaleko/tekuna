@@ -44,12 +44,10 @@ type URL struct {
 }
 
 type URLSet struct {
-	XMLName xmlns `xml:"urlset"`
-	Xmlns   string `xml:"xmlns,attr"`
-	URLs    []URL `xml:"url"`
+    XMLName xml.Name `xml:"urlset"`
+    Xmlns   string   `xml:"xmlns,attr"`
+    URLs    []URL    `xml:"url"`
 }
-
-type xmlns struct{}
 var db *gorm.DB
 
 func main() {
