@@ -393,17 +393,35 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
     var berita Berita
     if err := db.Where("slug = ?", slug).First(&berita).Error; err != nil {
 
-	    var latest []Berita
-	    db.Order("id desc").Limit(5).Find(&latest)
-	
-	    c.HTML(404, "empty.html", gin.H{
-	        "Title": "Berita tidak ditemukan",
-	        "Description": "Berita tidak ditemukan",
-	        "Message": "Berita tidak ditemukan",
-	        "latest": latest, // 🔥 kirim ke template
-	    })
-	    return
-	}
+    // 🔴 kalau benar-benar tidak ditemukan → 404
+    if err == gorm.ErrRecordNotFound {
+
+        var latest []Berita
+        db.Order("id desc").Limit(5).Find(&latest)
+
+        c.HTML(404, "empty.html", gin.H{
+            "Title":       "Berita tidak ditemukan",
+            "Description": "Berita tidak ditemukan",
+            "Message":     "Berita tidak ditemukan",
+            "latest":      latest,
+        })
+        return
+    }
+
+    // 🟡 kalau error database / koneksi → JANGAN 404
+    fmt.Println("DB ERROR:", err)
+
+    var latest []Berita
+    db.Order("id desc").Limit(5).Find(&latest)
+
+    c.HTML(200, "empty.html", gin.H{
+        "Title":       "Server sibuk",
+        "Description": "Terjadi kesalahan sementara",
+        "Message":     "Server sedang sibuk, coba lagi nanti",
+        "latest":      latest,
+    })
+    return
+}
 
     // 🔥 ambil 1 artikel random selain ini
     var bacaJuga Berita
