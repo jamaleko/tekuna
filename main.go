@@ -81,11 +81,12 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
+	
 	r.Use(func(c *gin.Context) {
-    c.Header("Cache-Control", "public, max-age=300")
-    c.Header("X-Content-Type-Options", "nosniff")
-    c.Header("X-Frame-Options", "SAMEORIGIN")
-    c.Header("X-XSS-Protection", "1; mode=block")
+    if c.Request.Method == "HEAD" {
+        // ubah HEAD jadi GET supaya ikut handler normal
+        c.Request.Method = "GET"
+    }
     c.Next()
 })
 	r.Static("/static", "./static")
@@ -351,13 +352,7 @@ r.HEAD("/privacy", func(c *gin.Context) {
 r.HEAD("/disclaimer", func(c *gin.Context) {
     c.Status(200)
 })*/
-	r.NoMethod(func(c *gin.Context) {
-    if c.Request.Method == "HEAD" {
-        c.Status(200)
-        return
-    }
-    c.AbortWithStatus(405)
-})
+
 	// homepage
 	r.GET("/", func(c *gin.Context) {
 		var berita []Berita
