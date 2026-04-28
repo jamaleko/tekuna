@@ -82,6 +82,7 @@ func main() {
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
+	r.StaticFile("/sitemap2.xml", "./static/sitemap2.xml")
 	r.SetFuncMap(template.FuncMap{
     	"safeHTML": func(s string) template.HTML {
         	return template.HTML(s)
