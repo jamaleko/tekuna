@@ -81,14 +81,6 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
-	
-	r.Use(func(c *gin.Context) {
-    if c.Request.Method == "HEAD" {
-        // ubah HEAD jadi GET supaya ikut handler normal
-        c.Request.Method = "GET"
-    }
-    c.Next()
-})
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
@@ -332,7 +324,7 @@ func main() {
 	// ROUTES
 	// ======================
     // WAJIB
-/*r.HEAD("/", func(c *gin.Context) {
+r.HEAD("/", func(c *gin.Context) {
     c.Status(200)
 })
 
@@ -351,7 +343,7 @@ r.HEAD("/privacy", func(c *gin.Context) {
 
 r.HEAD("/disclaimer", func(c *gin.Context) {
     c.Status(200)
-})*/
+})
 
 	// homepage
 	r.GET("/", func(c *gin.Context) {
