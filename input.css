@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* FONT INTER */
+/* ===== FONT ===== */
 @font-face {
   font-family: 'Inter';
   src: url('/static/fonts/Inter-Regular.woff2') format('woff2');
@@ -17,7 +17,64 @@
   font-display: swap;
 }
 
-/* APPLY GLOBAL */
 body {
   font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ===== TYPOGRAPHY (PROSE) ===== */
+.prose {
+  line-height: 1.75;
+  color: #374151;
+}
+
+.prose p {
+  margin-bottom: 1em;
+}
+
+.prose h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.prose h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.prose h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+
+.prose a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose ul {
+  padding-left: 20px;
+  list-style-type: disc;
+  margin-bottom: 1em;
+}
+
+.prose ol {
+  padding-left: 20px;
+  list-style-type: decimal;
+  margin-bottom: 1em;
+}
+
+.prose img {
+  margin: 16px 0;
+  border-radius: 8px;
+}
+
+.prose strong {
+  font-weight: bold;
 }
