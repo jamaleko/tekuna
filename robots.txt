@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tekuna.my.id/sitemap.xml
+Sitemap: https://tekuna.onrender.com/sitemap.xml
