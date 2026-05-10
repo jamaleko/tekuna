@@ -284,7 +284,7 @@ func main() {
 	r.GET("/sitemap.xml", func(c *gin.Context) {
     var urls []URL
 
-    baseURL := "https://tekuna.my.id"
+    baseURL := "https://tekuna.onrender.com/"
 
     urls = append(urls, URL{Loc: baseURL + "/"})
     urls = append(urls, URL{Loc: baseURL + "/privacy"})
