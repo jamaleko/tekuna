@@ -31,7 +31,26 @@ func searchHandler(c *gin.Context) {
     firstLink := ""
 
     if len(results) > 0 {
-        firstLink = results[0]
+
+        rss, err := ParseRSS(results[0])
+
+        if err == nil {
+
+            if len(rss.Channel.Item) > 0 {
+
+                firstLink = rss.Channel.Item[0].Link
+
+            } else {
+
+                firstLink = results[0]
+
+            }
+
+        } else {
+
+            firstLink = results[0]
+
+        }
     }
 
     c.JSON(http.StatusOK, gin.H{
