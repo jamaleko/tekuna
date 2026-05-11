@@ -453,6 +453,11 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 
 		url := c.Query("url")
 	
+		if url == "" {
+			c.String(400, "url kosong")
+			return
+		}
+	
 		title, content, image, err := ScrapeArticle(url)
 	
 		if err != nil {
@@ -460,10 +465,17 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			return
 		}
 	
+		preview := content
+	
+		// aman anti panic
+		if len(preview) > 1000 {
+			preview = preview[:1000]
+		}
+	
 		c.JSON(200, gin.H{
-			"title": title,
-			"image": image,
-			"content": content[:1000], // potong biar tidak kepanjangan
+			"title":   title,
+			"image":   image,
+			"content": preview,
 		})
 	})
 	// run server
