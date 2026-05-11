@@ -10,34 +10,36 @@ import (
 func searchHandler(c *gin.Context) {
     query := c.Query("q")
     if query == "" {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "error": "query parameter 'q' missing",
-        })
+        c.JSON(http.StatusBadRequest, gin.H{"error": "query parameter 'q' missing"})
         return
     }
 
-    // Panggil fungsi GoogleDorkSearch dari google.go
+    // Ambil hasil Google News RSS
     results, err := GoogleDorkSearch(query)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{
-            "error": err.Error(),
-        })
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
 
-    // ambil link pertama, resolve ke link asli dari resolve.go
+    // ambil link pertama
     firstLink := ""
-    if len(results) > 0 {
-        resolved, err := ResolveGoogleNewsURL(results[0])
-        if err == nil {
-            firstLink = resolved
-        } else {
-            firstLink = results[0]
+    resolvedResults := make([]string, len(results))
+
+    for i, link := range results {
+        resolvedLink, err := ResolveURL(link)
+        if err != nil {
+            resolvedLink = link // fallback ke RSS link
+        }
+        resolvedResults[i] = resolvedLink
+
+        // ambil link pertama resolved
+        if i == 0 {
+            firstLink = resolvedLink
         }
     }
 
     c.JSON(http.StatusOK, gin.H{
         "first_link": firstLink,
-        "results":    results,
+        "results":    resolvedResults,
     })
 }
