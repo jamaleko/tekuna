@@ -2,59 +2,33 @@ package main
 
 import (
 	"encoding/xml"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
-	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type RSS struct {
-	Channel Channel `xml:"channel"`
+	Channel struct {
+		Items []struct {
+			Title string `xml:"title"`
+			Link  string `xml:"link"`
+		} `xml:"item"`
+	} `xml:"channel"`
 }
 
-type Channel struct {
-	Items []Item `xml:"item"`
-}
+func GoogleDorkSearch(query string) ([]string, error) {
 
-type Item struct {
-	Title string `xml:"title"`
-	Link  string `xml:"link"`
-}
+	searchURL := "https://news.google.com/rss/search?q=" + url.QueryEscape(query) + "&hl=id&gl=ID&ceid=ID:id"
 
-func GoogleNews(query string) ([]string, error) {
-	encoded := url.QueryEscape(query)
-
-	rssURL := fmt.Sprintf(
-		"https://news.google.com/rss/search?q=%s&hl=id&gl=ID&ceid=ID:id",
-		encoded,
-	)
-
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", rssURL, nil)
+	resp, err := http.Get(searchURL)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
 	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 
 	var rss RSS
 
-	err = xml.Unmarshal(body, &rss)
+	err = xml.NewDecoder(resp.Body).Decode(&rss)
 	if err != nil {
 		return nil, err
 	}
@@ -66,21 +40,4 @@ func GoogleNews(query string) ([]string, error) {
 	}
 
 	return results, nil
-}
-
-func RegisterGoogleRoute(r *gin.Engine) {
-	r.GET("/test-google", func(c *gin.Context) {
-		date := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
-		query := `((teknologi OR saintek OR sains) AND (astronomi OR antariksa OR "luar angkasa" OR satelit OR roket OR NASA OR SpaceX))` + date
-
-		results, err := GoogleNews(query)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
-
-		c.JSON(200, gin.H{
-			"results": results,
-		})
-	})
 }
