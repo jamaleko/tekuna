@@ -1,76 +1,56 @@
 package main
 
 import (
-	"encoding/json"
-	//"fmt"
-	"io"
-	"net/http"
-	"net/url"
-
-	"github.com/gin-gonic/gin"
+    "encoding/json"
+    "fmt"
+    "io/ioutil"
+    "log"
+    "net/http"
+    "net/url"
 )
 
-type SearxResponse struct {
-	Results []SearxResult `json:"results"`
-}
-
 type SearxResult struct {
-	Title string `json:"title"`
-	URL   string `json:"url"`
+    Title string `json:"title"`
+    Url   string `json:"url"`
 }
 
-func SearchNews(query string) ([]SearxResult, error) {
-
-	base := "https://searx.be/search"
-
-	params := url.Values{}
-	params.Add("q", query)
-	params.Add("format", "json")
-
-	fullURL := base + "?" + params.Encode()
-
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", fullURL, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("User-Agent", "Mozilla/5.0")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var result SearxResponse
-
-	err = json.Unmarshal(body, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	return result.Results, nil
+type SearxResponse struct {
+    Results []SearxResult `json:"results"`
 }
 
-func RegisterSearchRoute(r *gin.Engine) {
+func main() {
+    query := "astronomi OR antariksa OR NASA" // ganti sesuai keyword
+    base := "https://searx.be/search"        // ganti instance SearXNG lain jika error
 
-	r.GET("/test-search", func(c *gin.Context) {
+    // build URL
+    params := url.Values{}
+    params.Add("q", query)
+    params.Add("format", "json") // wajib agar JSON
+    searchUrl := fmt.Sprintf("%s?%s", base, params.Encode())
 
-		query := `astronomi luar angkasa NASA`
+    // request
+    req, _ := http.NewRequest("GET", searchUrl, nil)
+    req.Header.Set("User-Agent", "Mozilla/5.0")
 
-		results, err := SearchNews(query)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
+    client := &http.Client{}
+    resp, err := client.Do(req)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer resp.Body.Close()
 
-		c.JSON(200, results)
-	})
+    body, _ := ioutil.ReadAll(resp.Body)
+
+    var result SearxResponse
+    err = json.Unmarshal(body, &result)
+    if err != nil {
+        log.Fatal("JSON parse error:", err)
+    }
+
+    // tampilkan hasil
+    for _, r := range result.Results {
+        fmt.Println("Title:", r.Title)
+        fmt.Println("Link :", r.Url)
+        fmt.Println("------")
+    }
 }
