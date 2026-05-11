@@ -60,6 +60,43 @@ func ScrapeArticle(url string) (string, string, string, error) {
 	}
 
 	// =========================
+	// GOOGLE NEWS DETECT
+	// =========================
+
+	if strings.Contains(finalURL, "news.google.com") {
+
+		// cari semua link keluar
+		foundURL := ""
+
+		doc.Find("a").Each(func(i int, s *goquery.Selection) {
+
+			href, exists := s.Attr("href")
+
+			if exists {
+
+				// skip internal google
+				if strings.Contains(href, "google.com") {
+					return
+				}
+
+				// url asli
+				if strings.HasPrefix(href, "http") {
+
+					foundURL = href
+				}
+			}
+		})
+
+		// kalau ketemu url asli
+		if foundURL != "" {
+
+			println("FOUND REAL URL:", foundURL)
+
+			return ScrapeArticle(foundURL)
+		}
+	}
+
+	// =========================
 	// TITLE
 	// =========================
 
