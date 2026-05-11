@@ -526,6 +526,17 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"results": results,
 		})
 	})
+	r.GET("/test-decode", func(c *gin.Context) {
+
+		link := c.Query("url")
+	
+		decoded := DecodeGoogleNewsURL(link)
+	
+		c.JSON(200, gin.H{
+			"decoded": decoded,
+		})
+	
+	})
 	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
