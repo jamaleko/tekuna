@@ -9,7 +9,20 @@ import (
 
 func ScrapeArticle(url string) (string, string, string, error) {
 
-	resp, err := http.Get(url)
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", "", "", err
+	}
+
+	// biar dianggap browser asli
+	req.Header.Set(
+		"User-Agent",
+		"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0 Safari/537.36",
+	)
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", "", "", err
 	}
@@ -21,14 +34,17 @@ func ScrapeArticle(url string) (string, string, string, error) {
 		return "", "", "", err
 	}
 
-	title := strings.TrimSpace(doc.Find("title").Text())
+	// ambil title
+	title := strings.TrimSpace(doc.Find("title").First().Text())
 
+	// ambil isi artikel
 	var paragraphs []string
 
 	doc.Find("p").Each(func(i int, s *goquery.Selection) {
 
 		text := strings.TrimSpace(s.Text())
 
+		// filter paragraf sampah
 		if len(text) > 60 {
 			paragraphs = append(paragraphs, text)
 		}
@@ -36,6 +52,7 @@ func ScrapeArticle(url string) (string, string, string, error) {
 
 	content := strings.Join(paragraphs, "\n\n")
 
+	// ambil og:image
 	image := ""
 
 	ogImage, exists := doc.Find(`meta[property="og:image"]`).Attr("content")
