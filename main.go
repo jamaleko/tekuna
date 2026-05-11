@@ -529,18 +529,6 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		c.String(200, realURL)
 	})
 	// run server
-	r.GET("/test-resolve", func(c *gin.Context) {
-
-	url := c.Query("url")
-
-	realURL, err := resolveGoogleNewsURL(url)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-
-	c.String(200, realURL)
-})
 	r.StaticFile("/favicon.png", "./favicon.png")
 	r.Run(":8080")
 }
