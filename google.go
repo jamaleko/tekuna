@@ -30,7 +30,7 @@ func GoogleDorkSearch(query string) ([]string, error) {
 
 	var results []string
 
-	for _, item := range rss.Channel.Items {
+	for _, item := range rss.Channel.Item {
 
 		results = append(results, item.Link)
 
