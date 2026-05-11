@@ -477,6 +477,28 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"content": preview,
 		})
 	})
+	r.GET("/test-ai", func(c *gin.Context) {
+
+		url := c.Query("url")
+	
+		title, content, _, err := ScrapeArticle(url)
+	
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	
+		source := "judul : " + title + "\n\n" + content
+	
+		result, err := GenerateAIArticle(source)
+	
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	
+		c.String(200, result)
+	})
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
 	r.Run(":8080")
