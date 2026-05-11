@@ -2,13 +2,17 @@ package main
 
 import (
 	"net/http"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
-func ResolveGoogleNewsURL(url string) (string, error) {
+func ResolveGoogleNewsURL(rawURL string) (string, error) {
 
-	resp, err := http.Get(url)
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return nil
+		},
+	}
+
+	resp, err := client.Get(rawURL)
 
 	if err != nil {
 		return "", err
@@ -16,17 +20,7 @@ func ResolveGoogleNewsURL(url string) (string, error) {
 
 	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	finalURL := resp.Request.URL.String()
 
-	if err != nil {
-		return "", err
-	}
-
-	link, exists := doc.Find(`link[rel="canonical"]`).Attr("href")
-
-	if exists {
-		return link, nil
-	}
-
-	return url, nil
+	return finalURL, nil
 }
