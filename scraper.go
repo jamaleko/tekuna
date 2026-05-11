@@ -8,22 +8,15 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-type ScrapeResult struct {
-	FinalURL string `json:"final_url"`
-	Title    string `json:"title"`
-	Image    string `json:"image"`
-	Content  string `json:"content"`
-}
-
 // ScrapeArticle
-func ScrapeArticle(url string) (*ScrapeResult, error) {
+func ScrapeArticle(url string) (string, string, string, error) {
 
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {
-		return nil, err
+		return "", "", "", err
 	}
 
 	// User-Agent browser asli
@@ -38,7 +31,7 @@ func ScrapeArticle(url string) (*ScrapeResult, error) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		return nil, err
+		return "", "", "", err
 	}
 
 	defer resp.Body.Close()
@@ -46,11 +39,13 @@ func ScrapeArticle(url string) (*ScrapeResult, error) {
 	// URL final setelah redirect
 	finalURL := resp.Request.URL.String()
 
+	println("FINAL URL:", finalURL)
+
 	// baca seluruh html
 	bodyBytes, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		return nil, err
+		return "", "", "", err
 	}
 
 	htmlContent := string(bodyBytes)
@@ -61,29 +56,8 @@ func ScrapeArticle(url string) (*ScrapeResult, error) {
 	)
 
 	if err != nil {
-		return nil, err
+		return "", "", "", err
 	}
-
-	// DEBUG DIV
-	doc.Find("div").Each(func(i int, s *goquery.Selection) {
-
-		class, _ := s.Attr("class")
-
-		text := strings.TrimSpace(s.Text())
-
-		if len(text) > 500 {
-
-			println("CLASS:", class)
-
-			if len(text) > 300 {
-				println("TEXT:", text[:300])
-			} else {
-				println("TEXT:", text)
-			}
-
-			println("================================")
-		}
-	})
 
 	// =========================
 	// TITLE
@@ -164,10 +138,5 @@ func ScrapeArticle(url string) (*ScrapeResult, error) {
 		content = debugHTML
 	}
 
-	return &ScrapeResult{
-		FinalURL: finalURL,
-		Title:    title,
-		Image:    image,
-		Content:  content,
-	}, nil
+	return title, content, image, nil
 }
