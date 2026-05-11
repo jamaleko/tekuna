@@ -1,44 +1,43 @@
 package main
 
 import (
-	"errors"
-	"io"
+	"encoding/xml"
 	"net/http"
 	"net/url"
 )
 
+type RSS struct {
+	Channel struct {
+		Items []struct {
+			Title string `xml:"title"`
+			Link  string `xml:"link"`
+		} `xml:"item"`
+	} `xml:"channel"`
+}
+
 func GoogleDorkSearch(query string) ([]string, error) {
 
-	searchURL :=
-		"https://priv.au/search?q=" +
-			url.QueryEscape(query) +
-			"&categories=news&format=json"
+	searchURL := "https://news.google.com/rss/search?q=" + url.QueryEscape(query) + "&hl=id&gl=ID&ceid=ID:id"
 
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", searchURL, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "Mozilla/5.0")
-
-	resp, err := client.Do(req)
-
+	resp, err := http.Get(searchURL)
 	if err != nil {
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body)
+	var rss RSS
 
+	err = xml.NewDecoder(resp.Body).Decode(&rss)
 	if err != nil {
 		return nil, err
 	}
 
-	// DEBUG tampilkan isi response
-	return nil, errors.New(string(body))
+	var results []string
+
+	for _, item := range rss.Channel.Items {
+		results = append(results, item.Link)
+	}
+
+	return results, nil
 }
