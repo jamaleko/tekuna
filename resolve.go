@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 func resolveGoogleNewsURL(url string) (string, error) {
@@ -30,9 +31,19 @@ func resolveGoogleNewsURL(url string) (string, error) {
 
 	html := string(body)
 
-	// cari url asli
-	re := regexp.MustCompile(`https://[^"]+`)
-	match := re.FindString(html)
+	re := regexp.MustCompile(`https://[^\s"'<>]+`)
+	matches := re.FindAllString(html, -1)
 
-	return match, nil
+	for _, m := range matches {
+
+		// skip google
+		if strings.Contains(m, "news.google.com") {
+			continue
+		}
+
+		// ambil url pertama non-google
+		return m, nil
+	}
+
+	return "", nil
 }
