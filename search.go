@@ -24,20 +24,3 @@ func searchHandler(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"results": results})
 }
 
-// GoogleDorkSearch: logika lama untuk search Google / SerpAPI / SearXNG
-func GoogleDorkSearch(query string) ([]string, error) {
-    if query == "" {
-        return nil, errors.New("query kosong")
-    }
-
-    // --- BEGIN: tambahkan logika search lama kamu di sini ---
-    // misal Google dork scraping, SerpAPI, atau SearXNG
-    // contoh dummy:
-    results := []string{
-        "https://example.com/article1",
-        "https://example.com/article2",
-    }
-    // --- END: logika search ---
-
-    return results, nil
-}
