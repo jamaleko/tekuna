@@ -526,9 +526,14 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"results": results,
 		})
 	})
+	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
 	r.Run(":8080")
+}
+// RegisterSearchRoute daftarkan route /search
+func RegisterSearchRoute(r *gin.Engine) {
+    r.GET("/search", searchHandler)
 }
 // list admin
 func adminList(c *gin.Context) {
