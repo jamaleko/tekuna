@@ -511,6 +511,23 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 		c.String(200, realURL)
 	})
+	r.GET("/test-rss", func(c *gin.Context) {
+
+		items, err := GetRSS(
+			"https://www.antaranews.com/rss/terkini.xml",
+		)
+	
+		if err != nil {
+	
+			c.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+	
+			return
+		}
+	
+		c.JSON(200, items)
+	})
 	r.GET("/test-google", func(c *gin.Context) {
 
 		query := `((teknologi OR saintek OR sains) AND (astronomi OR antariksa OR "luar angkasa" OR satelit OR roket OR NASA OR SpaceX)) -AI -hp -smartphone`
