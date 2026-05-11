@@ -503,7 +503,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 
 		url := c.Query("url")
 	
-		realURL, err := resolveGoogleNewsURL(url)
+		realURL, err := ResolveGoogleNewsURL(url)
 		if err != nil {
 			c.String(500, err.Error())
 			return
