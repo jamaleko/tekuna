@@ -8,13 +8,22 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func ScrapeArticle(url string) (string, string, string, error) {
+type ScrapeResult struct {
+	FinalURL string `json:"final_url"`
+	Title    string `json:"title"`
+	Image    string `json:"image"`
+	Content  string `json:"content"`
+}
+
+// ScrapeArticle
+func ScrapeArticle(url string) (*ScrapeResult, error) {
 
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
+
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 
 	// User-Agent browser asli
@@ -27,44 +36,62 @@ func ScrapeArticle(url string) (string, string, string, error) {
 	req.Header.Set("Accept", "text/html,application/xhtml+xml")
 
 	resp, err := client.Do(req)
+
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 
+	// URL final setelah redirect
+	finalURL := resp.Request.URL.String()
+
 	// baca seluruh html
 	bodyBytes, err := io.ReadAll(resp.Body)
+
 	if err != nil {
-		return "", "", "", err
+		return nil, err
 	}
 
 	htmlContent := string(bodyBytes)
 
 	// parse html
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
+	doc, err := goquery.NewDocumentFromReader(
+		strings.NewReader(htmlContent),
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// DEBUG DIV
 	doc.Find("div").Each(func(i int, s *goquery.Selection) {
 
 		class, _ := s.Attr("class")
-	
+
 		text := strings.TrimSpace(s.Text())
-	
+
 		if len(text) > 500 {
-	
+
 			println("CLASS:", class)
-			println("TEXT:", text[:300])
+
+			if len(text) > 300 {
+				println("TEXT:", text[:300])
+			} else {
+				println("TEXT:", text)
+			}
+
 			println("================================")
 		}
 	})
-	if err != nil {
-		return "", "", "", err
-	}
 
 	// =========================
 	// TITLE
 	// =========================
 
-	title := strings.TrimSpace(doc.Find("title").First().Text())
+	title := strings.TrimSpace(
+		doc.Find("title").First().Text(),
+	)
 
 	// =========================
 	// CONTENT
@@ -114,7 +141,9 @@ func ScrapeArticle(url string) (string, string, string, error) {
 
 	image := ""
 
-	ogImage, exists := doc.Find(`meta[property="og:image"]`).Attr("content")
+	ogImage, exists := doc.Find(
+		`meta[property="og:image"]`,
+	).Attr("content")
 
 	if exists {
 		image = ogImage
@@ -124,10 +153,6 @@ func ScrapeArticle(url string) (string, string, string, error) {
 	// DEBUG FALLBACK
 	// =========================
 
-	// kalau content kosong
-	// return html mentah sebagian
-	// supaya kita tahu diblok atau tidak
-
 	if content == "" {
 
 		debugHTML := htmlContent
@@ -136,8 +161,13 @@ func ScrapeArticle(url string) (string, string, string, error) {
 			debugHTML = debugHTML[:3000]
 		}
 
-		return title, debugHTML, image, nil
+		content = debugHTML
 	}
 
-	return title, content, image, nil
+	return &ScrapeResult{
+		FinalURL: finalURL,
+		Title:    title,
+		Image:    image,
+		Content:  content,
+	}, nil
 }
