@@ -512,6 +512,21 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 		c.String(200, realURL)
 	})
+	r.GET("/test-google", func(c *gin.Context) {
+
+		query := `((teknologi OR saintek OR sains) AND (astronomi OR antariksa OR "luar angkasa" OR satelit OR roket OR NASA OR SpaceX)) -AI -hp -smartphone`
+	
+		results, err := GoogleDorkSearch(query)
+	
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	
+		c.JSON(200, gin.H{
+			"results": results,
+		})
+	})
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
 	r.Run(":8080")
