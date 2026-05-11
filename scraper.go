@@ -43,6 +43,19 @@ func ScrapeArticle(url string) (string, string, string, error) {
 
 	// parse html
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
+	doc.Find("div").Each(func(i int, s *goquery.Selection) {
+
+		class, _ := s.Attr("class")
+	
+		text := strings.TrimSpace(s.Text())
+	
+		if len(text) > 500 {
+	
+			println("CLASS:", class)
+			println("TEXT:", text[:300])
+			println("================================")
+		}
+	})
 	if err != nil {
 		return "", "", "", err
 	}
