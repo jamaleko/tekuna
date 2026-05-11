@@ -500,13 +500,10 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		c.String(200, result)
 	})
 	r.GET("/test-google", func(c *gin.Context) {
-
 		date := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
-
-		query := `(teknologi OR sains OR astronomi OR antariksa OR satelit OR NASA OR SpaceX) -AI -hp -smartphone after:` + date
+		query := `((teknologi OR saintek OR sains) AND (astronomi OR antariksa OR "luar angkasa" OR satelit OR roket OR NASA OR SpaceX)) -AI -hp -smartphone` + date
 	
-		results, err := GoogleDorkSearch(query)
-	
+		results, err := SearchGoogle(query)
 		if err != nil {
 			c.String(500, err.Error())
 			return
