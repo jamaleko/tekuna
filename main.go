@@ -79,6 +79,7 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
+	RegisterSearchRoute(r)
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
