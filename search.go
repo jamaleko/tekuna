@@ -1,56 +1,54 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "log"
-    "net/http"
-    "net/url"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 )
 
-type SearxResult struct {
-    Title string `json:"title"`
-    Url   string `json:"url"`
-}
-
+// Struktur response SearXNG
 type SearxResponse struct {
-    Results []SearxResult `json:"results"`
+	Results []SearxResult `json:"results"`
 }
 
-func main() {
-    query := "astronomi OR antariksa OR NASA" // ganti sesuai keyword
-    base := "https://searx.be/search"        // ganti instance SearXNG lain jika error
+type SearxResult struct {
+	Title   string `json:"title"`
+	URL     string `json:"url"`
+	Content string `json:"content"`
+}
 
-    // build URL
-    params := url.Values{}
-    params.Add("q", query)
-    params.Add("format", "json") // wajib agar JSON
-    searchUrl := fmt.Sprintf("%s?%s", base, params.Encode())
+// Handler search
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("q")
+	if query == "" {
+		http.Error(w, "query parameter 'q' is required", http.StatusBadRequest)
+		return
+	}
 
-    // request
-    req, _ := http.NewRequest("GET", searchUrl, nil)
-    req.Header.Set("User-Agent", "Mozilla/5.0")
+	q := url.QueryEscape(query)
+	searxURL := fmt.Sprintf("https://searx.be/search?q=%s&format=json", q)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer resp.Body.Close()
+	resp, err := http.Get(searxURL)
+	if err != nil {
+		http.Error(w, "failed to fetch from SearXNG: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
 
-    body, _ := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		http.Error(w, "failed to read SearXNG response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    var result SearxResponse
-    err = json.Unmarshal(body, &result)
-    if err != nil {
-        log.Fatal("JSON parse error:", err)
-    }
+	var data SearxResponse
+	if err := json.Unmarshal(body, &data); err != nil {
+		http.Error(w, "failed to parse SearXNG JSON: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    // tampilkan hasil
-    for _, r := range result.Results {
-        fmt.Println("Title:", r.Title)
-        fmt.Println("Link :", r.Url)
-        fmt.Println("------")
-    }
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(data)
 }
