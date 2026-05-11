@@ -21,7 +21,20 @@ func GoogleDorkSearch(query string) ([]string, error) {
 			url.QueryEscape(query) +
 			"&categories=news&format=json"
 
-	resp, err := http.Get(searchURL)
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", searchURL, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// penting
+	req.Header.Set("Accept", "application/json")
+
+	req.Header.Set("User-Agent", "Mozilla/5.0")
+
+	resp, err := client.Do(req)
 
 	if err != nil {
 		return nil, err
