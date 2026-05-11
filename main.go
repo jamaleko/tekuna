@@ -449,7 +449,23 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	    })
 	})
 	fmt.Println("STEP 4 - SERVER RUNNING")
+	r.GET("/test-scrape", func(c *gin.Context) {
 
+		url := c.Query("url")
+	
+		title, content, image, err := ScrapeArticle(url)
+	
+		if err != nil {
+			c.String(500, err.Error())
+			return
+		}
+	
+		c.JSON(200, gin.H{
+			"title": title,
+			"image": image,
+			"content": content[:1000], // potong biar tidak kepanjangan
+		})
+	})
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
 	r.Run(":8080")
