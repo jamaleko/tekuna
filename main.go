@@ -481,8 +481,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 
 		url := c.Query("url")
 	
-		//title, content, image, err := ScrapeArticle(url)
-		title, content, err := ScrapeArticle(url)
+		title, content, _, err := ScrapeArticle(url)
 	
 		if err != nil {
 			c.String(500, err.Error())
