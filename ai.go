@@ -176,7 +176,7 @@ Isi Artikel`
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: "llama3-70b-8192",
+			Model: "llama-3.3-70B",
 
 			Messages: []openai.ChatCompletionMessage{
 				{
