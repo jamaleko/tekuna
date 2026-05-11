@@ -513,7 +513,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	})
 	r.GET("/test-rss", func(c *gin.Context) {
 
-		items, err := GetRSS(
+		rss, err := ParseRSS(
 			"https://www.antaranews.com/rss/terkini.xml",
 		)
 	
@@ -526,7 +526,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			return
 		}
 	
-		c.JSON(200, items)
+		c.JSON(200, rss.Channel.Item)
 	})
 	r.GET("/test-google", func(c *gin.Context) {
 
