@@ -1,7 +1,7 @@
 package main
 
 import (
-    "errors"
+    //"errors"
     "net/http"
     "github.com/gin-gonic/gin"
 )
