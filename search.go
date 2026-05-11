@@ -8,9 +8,7 @@ import (
 
 // searchHandler: ambil query ?q=...
 func searchHandler(c *gin.Context) {
-
     query := c.Query("q")
-
     if query == "" {
         c.JSON(http.StatusBadRequest, gin.H{
             "error": "query parameter 'q' missing",
@@ -18,7 +16,7 @@ func searchHandler(c *gin.Context) {
         return
     }
 
-    // Panggil fungsi search utama
+    // Panggil fungsi GoogleDorkSearch dari google.go
     results, err := GoogleDorkSearch(query)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{
@@ -27,7 +25,7 @@ func searchHandler(c *gin.Context) {
         return
     }
 
-    // ambil link pertama dan resolve ke link asli
+    // ambil link pertama, resolve ke link asli dari resolve.go
     firstLink := ""
     if len(results) > 0 {
         resolved, err := ResolveGoogleNewsURL(results[0])
