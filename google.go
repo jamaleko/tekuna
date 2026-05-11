@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -17,7 +18,7 @@ type SearxResponse struct {
 func GoogleDorkSearch(query string) ([]string, error) {
 
 	searchURL :=
-		"https://search.inetol.net/search?q=" +
+		"https://priv.au/search?q=" +
 			url.QueryEscape(query) +
 			"&categories=news&format=json"
 
@@ -30,7 +31,6 @@ func GoogleDorkSearch(query string) ([]string, error) {
 	}
 
 	req.Header.Set("Accept", "application/json")
-
 	req.Header.Set("User-Agent", "Mozilla/5.0")
 
 	resp, err := client.Do(req)
@@ -41,9 +41,15 @@ func GoogleDorkSearch(query string) ([]string, error) {
 
 	defer resp.Body.Close()
 
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
 	var data SearxResponse
 
-	err = json.NewDecoder(resp.Body).Decode(&data)
+	err = json.Unmarshal(body, &data)
 
 	if err != nil {
 		return nil, err
