@@ -17,7 +17,7 @@ type SearxResponse struct {
 func GoogleDorkSearch(query string) ([]string, error) {
 
 	searchURL :=
-		"https://searx.be/search?q=" +
+		"https://search.inetol.net/search?q=" +
 			url.QueryEscape(query) +
 			"&categories=news&format=json"
 
@@ -29,7 +29,6 @@ func GoogleDorkSearch(query string) ([]string, error) {
 		return nil, err
 	}
 
-	// penting
 	req.Header.Set("Accept", "application/json")
 
 	req.Header.Set("User-Agent", "Mozilla/5.0")
