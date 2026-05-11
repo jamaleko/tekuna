@@ -1,19 +1,11 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
 )
-
-type SearchResult struct {
-	URL string `json:"url"`
-}
-
-type SearxResponse struct {
-	Results []SearchResult `json:"results"`
-}
 
 func GoogleDorkSearch(query string) ([]string, error) {
 
@@ -47,19 +39,6 @@ func GoogleDorkSearch(query string) ([]string, error) {
 		return nil, err
 	}
 
-	var data SearxResponse
-
-	err = json.Unmarshal(body, &data)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var results []string
-
-	for _, item := range data.Results {
-		results = append(results, item.URL)
-	}
-
-	return results, nil
+	// DEBUG tampilkan isi response
+	return nil, errors.New(string(body))
 }
