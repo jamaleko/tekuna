@@ -458,7 +458,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			return
 		}
 	
-		data, err := ScrapeArticle(url)
+		title, content, image, err := ScrapeArticle(url)
 	
 		if err != nil {
 			c.String(500, err.Error())
@@ -472,16 +472,16 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		}
 	
 		c.JSON(200, gin.H{
-			"title":   data.title,
-			"image":   data.image,
-			"content": data.preview,
+			"title":   title,
+			"image":   image,
+			"content": preview,
 		})
 	})
 	r.GET("/test-ai", func(c *gin.Context) {
 
 		url := c.Query("url")
 	
-		data, err := ScrapeArticle(url)
+		title, content, image, err := ScrapeArticle(url)
 	
 		if err != nil {
 			c.String(500, err.Error())
