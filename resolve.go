@@ -37,12 +37,29 @@ func resolveGoogleNewsURL(url string) (string, error) {
 	for _, m := range matches {
 
 		// skip google
-		if strings.Contains(m, "news.google.com") {
+		if strings.Contains(m, "google.com") {
 			continue
 		}
 
-		// ambil url pertama non-google
-		return m, nil
+		if strings.Contains(m, "googleusercontent") {
+			continue
+		}
+
+		// skip image
+		if strings.Contains(m, ".png") ||
+			strings.Contains(m, ".jpg") ||
+			strings.Contains(m, ".jpeg") ||
+			strings.Contains(m, ".webp") {
+			continue
+		}
+
+		// HARUS artikel
+		if strings.Contains(m, ".com") ||
+			strings.Contains(m, ".id") ||
+			strings.Contains(m, ".net") {
+
+			return m, nil
+		}
 	}
 
 	return "", nil
