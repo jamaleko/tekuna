@@ -1,42 +1,52 @@
 package main
 
 import (
-	"encoding/xml"
+	"io"
 	"net/http"
-	"net/url"
+	"regexp"
 )
 
-type RSS struct {
-	Channel struct {
-		Items []struct {
-			Title string `xml:"title"`
-			Link  string `xml:"link"`
-		} `xml:"item"`
-	} `xml:"channel"`
-}
+func SearchGoogle(query string) ([]string, error) {
 
-func GoogleDorkSearch(query string) ([]string, error) {
+	url := "https://www.google.com/search?q=" + query
 
-	searchURL := "https://news.google.com/rss/search?q=" + url.QueryEscape(query) + "&hl=id&gl=ID&ceid=ID:id"
+	client := &http.Client{}
 
-	resp, err := http.Get(searchURL)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
+	// WAJIB
+	req.Header.Set("User-Agent", "Mozilla/5.0")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
 	defer resp.Body.Close()
 
-	var rss RSS
-
-	err = xml.NewDecoder(resp.Body).Decode(&rss)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	html := string(body)
+
+	// ambil semua url
+	re := regexp.MustCompile(`https://[^"&]+`)
+	matches := re.FindAllString(html, -1)
 
 	var results []string
 
-	for _, item := range rss.Channel.Items {
-		results = append(results, item.Link)
+	for _, m := range matches {
+
+		// skip google
+		if regexp.MustCompile(`google`).MatchString(m) {
+			continue
+		}
+
+		results = append(results, m)
 	}
 
 	return results, nil
