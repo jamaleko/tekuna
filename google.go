@@ -1,16 +1,25 @@
 package main
 
 import (
-	"encoding/xml"
+	"encoding/json"
 	"net/http"
 	"net/url"
 )
 
+type SearchResult struct {
+	URL string `json:"url"`
+}
+
+type SearxResponse struct {
+	Results []SearchResult `json:"results"`
+}
+
 func GoogleDorkSearch(query string) ([]string, error) {
 
-	searchURL := "https://news.google.com/rss/search?q=" +
-		url.QueryEscape(query) +
-		"&hl=id&gl=ID&ceid=ID:id"
+	searchURL :=
+		"https://searx.be/search?q=" +
+			url.QueryEscape(query) +
+			"&categories=news&format=json"
 
 	resp, err := http.Get(searchURL)
 
@@ -20,9 +29,9 @@ func GoogleDorkSearch(query string) ([]string, error) {
 
 	defer resp.Body.Close()
 
-	var rss RSS
+	var data SearxResponse
 
-	err = xml.NewDecoder(resp.Body).Decode(&rss)
+	err = json.NewDecoder(resp.Body).Decode(&data)
 
 	if err != nil {
 		return nil, err
@@ -30,10 +39,8 @@ func GoogleDorkSearch(query string) ([]string, error) {
 
 	var results []string
 
-	for _, item := range rss.Channel.Item {
-
-		results = append(results, item.Link)
-
+	for _, item := range data.Results {
+		results = append(results, item.URL)
 	}
 
 	return results, nil
