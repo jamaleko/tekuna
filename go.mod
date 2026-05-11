@@ -7,6 +7,8 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	gorm.io/driver/postgres v1.4.6
 	gorm.io/gorm v1.25.0
+	github.com/PuerkitoBio/goquery v1.10.0
+	github.com/sashabaranov/go-openai v1.41.2
 )
 
 require (
