@@ -79,6 +79,7 @@ func main() {
 
 	// setup gin
 	r := gin.Default()
+	RegisterGoogleRoute(r)
 	r.Static("/static", "./static")
 	r.StaticFile("/favicon.ico", "./favicon.ico")
 	r.StaticFile("/robots.txt", "./robots.txt")
@@ -498,20 +499,6 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		}
 	
 		c.String(200, result)
-	})
-	r.GET("/test-google", func(c *gin.Context) {
-		date := time.Now().AddDate(0, 0, -3).Format("2006-01-02")
-		query := `((teknologi OR saintek OR sains) AND (astronomi OR antariksa OR "luar angkasa" OR satelit OR roket OR NASA OR SpaceX)) -AI -hp -smartphone` + date
-	
-		results, err := SearchGoogle(query)
-		if err != nil {
-			c.String(500, err.Error())
-			return
-		}
-	
-		c.JSON(200, gin.H{
-			"results": results,
-		})
 	})
 	r.GET("/test-resolve", func(c *gin.Context) {
 
