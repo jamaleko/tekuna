@@ -2,6 +2,7 @@ package main
 
 import (
     "net/http"
+
     "github.com/gin-gonic/gin"
 )
 
@@ -19,7 +20,6 @@ func searchHandler(c *gin.Context) {
 
     // Panggil fungsi search utama
     results, err := GoogleDorkSearch(query)
-
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{
             "error": err.Error(),
@@ -27,34 +27,19 @@ func searchHandler(c *gin.Context) {
         return
     }
 
-    // ambil link pertama
+    // ambil link pertama dan resolve ke link asli
     firstLink := ""
-
     if len(results) > 0 {
-
-        rss, err := ParseRSS(results[0])
-
+        resolved, err := ResolveGoogleNewsURL(results[0])
         if err == nil {
-
-            if len(rss.Channel.Item) > 0 {
-
-                firstLink = rss.Channel.Item[0].Link
-
-            } else {
-
-                firstLink = results[0]
-
-            }
-
+            firstLink = resolved
         } else {
-
             firstLink = results[0]
-
         }
     }
 
     c.JSON(http.StatusOK, gin.H{
         "first_link": firstLink,
-        "results": results,
+        "results":    results,
     })
 }
