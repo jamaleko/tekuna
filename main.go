@@ -993,8 +993,81 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	})
 	r.GET("/auto-post", func(c *gin.Context) {
 
-	 var allItems []FeedItem
+	 result, err := AutoPost()
 	
+	 if err != nil {
+	
+	  c.JSON(500, gin.H{
+	   "error": err.Error(),
+	  })
+	
+	  return
+	 }
+	
+	 c.JSON(200, result)
+	})
+	go StartAutoPostScheduler()
+	RegisterSearchRoute(r)
+	// run server
+	r.StaticFile("/favicon.png", "./favicon.png")
+	r.Run(":8080")
+}
+func StartAutoPostScheduler() {
+
+ ticker :=
+  time.NewTicker(
+   30 * time.Minute,
+  )
+
+ defer ticker.Stop()
+
+ println("AUTO POST SCHEDULER STARTED")
+
+ for {
+
+  select {
+
+  case <-ticker.C:
+
+   println("AUTO POST RUNNING")
+
+   result, err :=
+    AutoPost()
+
+   if err != nil {
+
+    println(
+     "AUTO POST ERROR:",
+     err.Error(),
+    )
+
+    continue
+   }
+
+   // aman
+   title, ok :=
+    result["title"].(string)
+
+   if ok {
+
+    println(
+     "AUTO POST SUCCESS:",
+     title,
+    )
+
+   } else {
+
+    println(
+     "AUTO POST FINISHED",
+    )
+   }
+  }
+ }
+}
+func AutoPost() (gin.H, error) {
+
+	  var allItems []FeedItem
+
 	 // ====================
 	 // RSS FEEDS
 	 // ====================
@@ -1076,34 +1149,52 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	 }
 	
 	 // ====================
-	 // RANDOM ARTICLE
+	 // REMOVE DUPLICATE
 	 // ====================
 	
-	 randIndex :=
-	  rand.Intn(len(priorityItems))
+	 var availableItems []FeedItem
 	
-	 item := priorityItems[randIndex]
+	 for _, item := range priorityItems {
 	
-	 // ====================
-	 // DEDUPLICATE
-	 // ====================
+	  var existing Berita
 	
-	 var existing Berita
+	  err := db.Where(
+	   "source_link = ?",
+	   item.Link,
+	  ).First(&existing).Error
 	
-	 err := db.Where(
-	  "source_link = ?",
-	  item.Link,
-	 ).First(&existing).Error
+	  // belum pernah dipost
+	  if err == gorm.ErrRecordNotFound {
 	
-	 if err == nil {
+	   availableItems =
+	    append(
+	     availableItems,
+	     item,
+	    )
+	  }
+	 }
+	
+	 // semua habis
+	 if len(availableItems) == 0 {
 	
 	  c.JSON(200, gin.H{
-	   "status": "sudah ada",
-	   "link":   item.Link,
+	
+	   "status": "semua artikel sudah dipost",
 	  })
 	
 	  return
 	 }
+	
+	 // ====================
+	 // RANDOM ARTICLE
+	 // ====================
+	
+	 randIndex :=
+	  rand.Intn(len(availableItems))
+	
+	 item := availableItems[randIndex]
+	
+	 println("RANDOM:", item.Title)
 	
 	 // ====================
 	 // SCRAPE ARTICLE
@@ -1185,16 +1276,18 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	   strings.TrimSpace(titlePart)
 	
 	  if titlePart != "" {
+	
 	   newTitle = titlePart
 	  }
 	
 	  if contentPart != "" {
+	
 	   newContent = contentPart
 	  }
 	 }
 	
 	 // ====================
-	 // FORMAT HTML PARAGRAPH
+	 // FORMAT HTML
 	 // ====================
 	
 	 paragraphs :=
@@ -1213,8 +1306,18 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	   continue
 	  }
 	
-	  htmlContent +=
-	   "<p>" + p + "</p>"
+	  // kalau sudah HTML jangan bungkus lagi
+	  if strings.Contains(p, "<p>") ||
+	   strings.Contains(p, "<h2>") ||
+	   strings.Contains(p, "<h3>") {
+	
+	   htmlContent += p
+	
+	  } else {
+	
+	   htmlContent +=
+	    "<p>" + p + "</p>"
+	  }
 	 }
 	
 	 // ====================
@@ -1259,7 +1362,6 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	 }
 	
 	 db.Create(&berita)
-	
 	 // ====================
 	 // RESULT
 	 // ====================
@@ -1276,12 +1378,11 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 	  "url": "https://tekuna.my.id/berita/" + slug,
 	 })
-	})
-	RegisterSearchRoute(r)
-	// run server
-	r.StaticFile("/favicon.png", "./favicon.png")
-	r.Run(":8080")
-}
+	
+	 return gin.H{
+	  "status": "posted",
+	 }, nil
+	}
 // RegisterSearchRoute daftarkan route /search
 func RegisterSearchRoute(r *gin.Engine) {
     r.GET("/search", searchHandler)
