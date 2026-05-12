@@ -513,7 +513,8 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	})
 	r.GET("/test-rss", func(c *gin.Context) {
 
-		rss, err := ParseRSS(
+		// RSS 1
+		rss1, err := ParseRSS(
 			"https://inet.detik.com/rss",
 		)
 	
@@ -526,8 +527,29 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			return
 		}
 	
-		filtered := FilterRSS(rss.Channel.Item)
-		
+		// RSS 2
+		rss2, err := ParseRSS(
+			"https://www.antaranews.com/rss/tekno.xml",
+		)
+	
+		if err != nil {
+	
+			c.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+	
+			return
+		}
+	
+		// gabungkan item
+		allItems := append(
+			rss1.Channel.Item,
+			rss2.Channel.Item...,
+		)
+	
+		// filter niche
+		filtered := FilterRSS(allItems)
+	
 		c.JSON(200, filtered)
 	})
 	r.GET("/test-google", func(c *gin.Context) {
