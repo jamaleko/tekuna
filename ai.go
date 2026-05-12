@@ -61,19 +61,27 @@ GAYA PENULISAN:
 - Tidak kaku
 - Variasi panjang kalimat
 - Tambahkan insight ringan
+- Hindari pengulangan pola kalimat
+- Hindari frasa transisi yang sama berulang kali
+- Variasikan pembuka paragraf
+- Tulis seperti artikel yang benar-benar ditulis manusia,
+  bukan hasil parafrase AI
 
 HINDARI:
 - "Artikel ini akan membahas"
 - "Di era digital saat ini"
 
 REWRITE KUTIPAN:
-- Attribution seperti:
-  - ujar
-  - tutur
-  - jelasnya
+- Isi kutipan di dalam tanda petik wajib dipertahankan utuh
+- Attribution/pengantar kutipan wajib dibuat bervariasi dan natural
+- Jangan mengulang frasa attribution yang sama terus menerus
+- Hindari pengulangan seperti:
   - katanya
-  boleh diubah agar lebih natural
-- Tetapi isi kutipan di dalam tanda petik wajib dipertahankan utuh
+  - ujar dia
+  - dan bahwa
+  - menurutnya
+  di banyak paragraf
+- Gunakan variasi attribution yang lebih manusiawi dan kontekstual
 
 Gunakan struktur HTML seperti:
 <h2>Subjudul</h2>
