@@ -107,12 +107,12 @@ Contoh gaya:
 
  STRUKTUR OUTPUT:
 
-1. Judul artikel
+1. Judul Artikel
 
 - Harus mengandung keyword utama
 - Natural & menarik
 
-2. Isi artikel
+2. Isi Artikel
 
 - Paragraf pertama:
   
@@ -171,11 +171,14 @@ REWRITE KUTIPAN & UCAPAN (WAJIB):
 TAMBAHAN (WAJIB)
 - Jangan ada kata-kata seperti "Keyword Utama" dan "Keyword Turunan" di Isi Artikel, 
   Jika ada maka Isi Artikel dianggap tidak valid
-- Jangan memasukkan judul di Isi Artikel, jika dimasukkan maka Isi Artikel dianggap tidak valid  
----
 
- OUTPUT:
-Isi Artikel`
+Format output wajib:
+
+JUDUL:
+[Judul Artikel]
+
+ISI:
+[Isi Artikel]`
 
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
