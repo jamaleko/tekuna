@@ -530,10 +530,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"https://www.sciencedaily.com/rss/space_time.xml",
 		}
 	
-		var allItems []struct {
-			Title string `xml:"title"`
-			Link  string `xml:"link"`
-		}
+		var allItems []FeedItem
 	
 		for _, feedURL := range feeds {
 	
@@ -552,12 +549,11 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			)
 		}
 	
-		// filter niche
 		filtered := FilterRSS(allItems)
 	
 		c.JSON(200, gin.H{
-			"total":    len(filtered),
-			"results":  filtered,
+			"total":   len(filtered),
+			"results": filtered,
 		})
 	})
 	r.GET("/test-google", func(c *gin.Context) {
