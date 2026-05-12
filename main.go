@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"html"
 	"encoding/xml"
+	"math/rand"
 )
 
 type Berita struct {
