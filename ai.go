@@ -168,9 +168,12 @@ REWRITE KUTIPAN & UCAPAN (WAJIB):
 - Yang boleh diubah hanya gaya attribution/pengantar kutipan agar lebih natural.
 
 ---
+TAMBAHAN (WAJIB)
+- Jangan ada kata-kata seperti "Keyword Utama" dan "Keyword Turunan" di Isi Artikel, 
+  Jika ada maka Isi Artikel dianggap tidak valid
+---
 
  OUTPUT:
-Judul
 Isi Artikel`
 
 	resp, err := client.CreateChatCompletion(
