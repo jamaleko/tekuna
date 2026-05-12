@@ -556,6 +556,23 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		})
 	
 	})
+	r.GET("/test-sitemap", func(c *gin.Context) {
+
+		sitemap, err := ParseSitemap(
+			"https://www.kompas.com/sitemap-news-sains.xml",
+		)
+	
+		if err != nil {
+	
+			c.JSON(500, gin.H{
+				"error": err.Error(),
+			})
+	
+			return
+		}
+	
+		c.JSON(200, sitemap.URLs)
+	})
 	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
