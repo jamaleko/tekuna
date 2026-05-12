@@ -7,12 +7,15 @@ import (
 	"strings"
 )
 
+type FeedItem struct {
+	Title string `xml:"title" json:"title"`
+	Link  string `xml:"link" json:"link"`
+	Loc   string `xml:"loc" json:"-"`
+}
+
 type RSS struct {
 	Channel struct {
-		Item []struct {
-			Title string `xml:"title"`
-			Link  string `xml:"link"`
-		} `xml:"item"`
+		Item []FeedItem `xml:"item"`
 	} `xml:"channel"`
 }
 
@@ -42,18 +45,10 @@ func ParseRSS(url string) (*RSS, error) {
 
 	return &rss, nil
 }
-func FilterRSS(items []struct {
-	Title string `xml:"title"`
-	Link  string `xml:"link"`
-	}) []struct {
-		Title string `xml:"title"`
-		Link  string `xml:"link"`
-	} {
 
-	var filtered []struct {
-		Title string `xml:"title"`
-		Link  string `xml:"link"`
-	}
+func FilterRSS(items []FeedItem) []FeedItem {
+
+	var filtered []FeedItem
 
 	groupA := []string{
 		"teknologi",
@@ -69,50 +64,61 @@ func FilterRSS(items []struct {
 		"roket",
 		"nasa",
 		"spacex",
+		"mars",
+		"bulan",
+		"galaksi",
 	}
 
 	blocked := []string{
 		"ai",
 		"hp",
 		"smartphone",
+		"iphone",
+		"android",
+		"ios",
 	}
 
 	for _, item := range items {
 
-		text := strings.ToLower(item.Title)
+		text := strings.ToLower(
+			strings.TrimSpace(item.Title),
+		)
 
 		matchA := false
 		matchB := false
 		blockedFound := false
 
-		// cek group A
+		// GROUP A
 		for _, keyword := range groupA {
 
 			if strings.Contains(text, keyword) {
+
 				matchA = true
 				break
 			}
 		}
 
-		// cek group B
+		// GROUP B
 		for _, keyword := range groupB {
 
 			if strings.Contains(text, keyword) {
+
 				matchB = true
 				break
 			}
 		}
 
-		// cek blocked
+		// BLOCKED
 		for _, keyword := range blocked {
 
 			if strings.Contains(text, keyword) {
+
 				blockedFound = true
 				break
 			}
 		}
 
-		// lolos filter
+		// FINAL FILTER
 		if (matchA || matchB) && !blockedFound {
 
 			filtered = append(filtered, item)
