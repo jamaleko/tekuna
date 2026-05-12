@@ -1234,7 +1234,7 @@ func AutoPost() (gin.H, error) {
  // ====================
 
  re := regexp.MustCompile(
- (?is)JUDUL\s*:\s*(.*?)\s*ISI\s*:\s*(.*),
+ `(?is)JUDUL\s*:\s*(.*?)\s*ISI\s*:\s*(.*)`,
 )
 
 matches :=
