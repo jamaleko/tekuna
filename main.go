@@ -618,6 +618,10 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"https://www.nasa.gov/news-release/feed/",
 	
 			"https://www.space.com/feeds.xml",
+	
+			"https://feeds.arstechnica.com/arstechnica/science",
+	
+			"https://www.sciencedaily.com/rss/space_time.xml",
 		}
 	
 		for _, feed := range rssFeeds {
@@ -625,6 +629,9 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			rss, err := ParseRSS(feed)
 	
 			if err != nil {
+	
+				println("RSS ERROR:", feed)
+	
 				continue
 			}
 	
@@ -648,6 +655,9 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			sitemap, err := ParseSitemap(feed)
 	
 			if err != nil {
+	
+				println("SITEMAP ERROR:", feed)
+	
 				continue
 			}
 	
@@ -658,14 +668,12 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		}
 	
 		// ====================
-		// FILTER
+		// NO FILTER
 		// ====================
 	
-		filtered := FilterRSS(allItems)
-	
 		c.JSON(200, gin.H{
-			"total":   len(filtered),
-			"results": filtered,
+			"total":   len(allItems),
+			"results": allItems,
 		})
 	})
 	RegisterSearchRoute(r)
