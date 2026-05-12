@@ -1106,7 +1106,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	 }
 	
 	 // ====================
-	 // SCRAPE
+	 // SCRAPE ARTICLE
 	 // ====================
 	
 	 title, content, image, err :=
@@ -1121,6 +1121,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	  return
 	 }
 	
+	 // content terlalu pendek
 	 if len(content) < 500 {
 	
 	  c.JSON(500, gin.H{
@@ -1148,6 +1149,27 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	  })
 	
 	  return
+	 }
+	
+	 // ====================
+	 // FORMAT HTML PARAGRAPH
+	 // ====================
+	
+	 paragraphs :=
+	  strings.Split(rewrite, "\n\n")
+	
+	 htmlContent := ""
+	
+	 for _, p := range paragraphs {
+	
+	  p = strings.TrimSpace(p)
+	
+	  if p == "" {
+	   continue
+	  }
+	
+	  htmlContent +=
+	   "<p>" + p + "</p>"
 	 }
 	
 	 // ====================
@@ -1182,7 +1204,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 	  Slug: slug,
 	
-	  Isi: rewrite,
+	  Isi: htmlContent,
 	
 	  Gambar: uploadedImage,
 	
