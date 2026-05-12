@@ -31,6 +31,7 @@ type Berita struct {
 	Slug    string `gorm:"unique"`
 	Isi     string
 	Gambar  string
+	SourceLink string `gorm:"unique"`
 	Tanggal time.Time // ✅ tambah ini
 }
 
@@ -988,6 +989,225 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	  "image": image,
 	
 	  "rewrite": rewrite,
+	 })
+	})
+	r.GET("/auto-post", func(c *gin.Context) {
+
+	 var allItems []FeedItem
+	
+	 // ====================
+	 // RSS FEEDS
+	 // ====================
+	
+	 rssFeeds := []string{
+	
+	  "https://inet.detik.com/rss",
+	
+	  "https://www.antaranews.com/rss/tekno.xml",
+	
+	  "https://www.cnnindonesia.com/teknologi/rss",
+	
+	  "https://www.nasa.gov/news-release/feed/",
+	
+	  "https://www.space.com/feeds.xml",
+	
+	  "https://feeds.arstechnica.com/arstechnica/science",
+	
+	  "https://www.sciencedaily.com/rss/space_time.xml",
+	 }
+	
+	 for _, feed := range rssFeeds {
+	
+	  rss, err := ParseRSS(feed)
+	
+	  if err != nil {
+	
+	   println("RSS ERROR:", feed)
+	
+	   continue
+	  }
+	
+	  allItems = append(
+	   allItems,
+	   rss.Channel.Item...,
+	  )
+	 }
+	
+	 // ====================
+	 // SITEMAP FEEDS
+	 // ====================
+	
+	 sitemapFeeds := []string{
+	
+	  "https://www.kompas.com/sitemap-news-sains.xml",
+	 }
+	
+	 for _, feed := range sitemapFeeds {
+	
+	  sitemap, err := ParseSitemap(feed)
+	
+	  if err != nil {
+	
+	   println("SITEMAP ERROR:", feed)
+	
+	   continue
+	  }
+	
+	  allItems = append(
+	   allItems,
+	   sitemap.URLs...,
+	  )
+	 }
+	
+	 // ====================
+	 // FILTER PRIORITAS
+	 // ====================
+	
+	 priorityItems :=
+	  FilterPriorityLinks(allItems)
+	
+	 if len(priorityItems) == 0 {
+	
+	  c.JSON(500, gin.H{
+	   "error": "priority kosong",
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // RANDOM ARTICLE
+	 // ====================
+	
+	 randIndex :=
+	  rand.Intn(len(priorityItems))
+	
+	 item := priorityItems[randIndex]
+	
+	 // ====================
+	 // DEDUPLICATE
+	 // ====================
+	
+	 var existing Berita
+	
+	 err := db.Where(
+	  "source_link = ?",
+	  item.Link,
+	 ).First(&existing).Error
+	
+	 if err == nil {
+	
+	  c.JSON(200, gin.H{
+	   "status": "sudah ada",
+	   "link":   item.Link,
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // SCRAPE
+	 // ====================
+	
+	 title, content, image, err :=
+	  ScrapeArticle(item.Link)
+	
+	 if err != nil {
+	
+	  c.JSON(500, gin.H{
+	   "error": err.Error(),
+	  })
+	
+	  return
+	 }
+	
+	 if len(content) < 500 {
+	
+	  c.JSON(500, gin.H{
+	   "error": "content terlalu pendek",
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // AI REWRITE
+	 // ====================
+	
+	 source :=
+	  "Judul: " + title +
+	   "\n\n" + content
+	
+	 rewrite, err :=
+	  GenerateAIArticle(source)
+	
+	 if err != nil {
+	
+	  c.JSON(500, gin.H{
+	   "error": err.Error(),
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // UPLOAD IMAGE
+	 // ====================
+	
+	 uploadedImage := image
+	
+	 if image != "" {
+	
+	  newImage, err :=
+	   UploadImageFromURL(
+	    image,
+	    title,
+	   )
+	
+	  if err == nil {
+	
+	   uploadedImage = newImage
+	  }
+	 }
+	
+	 // ====================
+	 // SAVE DATABASE
+	 // ====================
+	
+	 slug := createSlug(title)
+	
+	 berita := Berita{
+	
+	  Judul: title,
+	
+	  Slug: slug,
+	
+	  Isi: rewrite,
+	
+	  Gambar: uploadedImage,
+	
+	  SourceLink: item.Link,
+	
+	  Tanggal: time.Now(),
+	 }
+	
+	 db.Create(&berita)
+	
+	 // ====================
+	 // RESULT
+	 // ====================
+	
+	 c.JSON(200, gin.H{
+	
+	  "status": "posted",
+	
+	  "title": title,
+	
+	  "slug": slug,
+	
+	  "image": uploadedImage,
+	
+	  "url": "https://tekuna.my.id/berita/" + slug,
 	 })
 	})
 	RegisterSearchRoute(r)
