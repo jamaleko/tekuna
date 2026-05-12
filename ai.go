@@ -20,7 +20,7 @@ func GenerateAIArticle(source string) (string, error) {
  client :=
   openai.NewClientWithConfig(config)
 
- systemPrompt := 
+ systemPrompt := `
 Kamu adalah penulis blog teknologi Indonesia.
 
 Tugas:
@@ -78,7 +78,7 @@ REWRITE KUTIPAN:
 Gunakan struktur HTML seperti:
 <h2>Subjudul</h2>
 <p>Isi paragraf</p>
-
+`
 
  userPrompt :=
   "Pahami artikel berikut lalu rewrite:\n\n" +
