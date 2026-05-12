@@ -676,6 +676,79 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"results": allItems,
 		})
 	})
+	r.GET("/process-feed", func(c *gin.Context) {
+
+		var results []gin.H
+	
+		for i := 0; i < maxProcess; i++ {
+	
+			item := allItems[i]
+	
+			println("PROCESS:", item.Title)
+	
+			// ====================
+			// SCRAPE ARTICLE
+			// ====================
+	
+			title, content, image, err := ScrapeArticle(item.Link)
+	
+			if err != nil {
+	
+				results = append(results, gin.H{
+					"source_title": item.Title,
+					"link":         item.Link,
+					"error":        err.Error(),
+				})
+	
+				continue
+			}
+	
+			// skip artikel kosong
+			if len(content) < 500 {
+	
+				results = append(results, gin.H{
+					"source_title": item.Title,
+					"link":         item.Link,
+					"status":       "content too short",
+				})
+	
+				continue
+			}
+	
+			// ====================
+			// AI REWRITE
+			// ====================
+	
+			source := "Judul: " + title + "\n\n" + content
+	
+			rewrite, err := GenerateAIArticle(source)
+	
+			if err != nil {
+	
+				results = append(results, gin.H{
+					"source_title": item.Title,
+					"link":         item.Link,
+					"error":        err.Error(),
+				})
+	
+				continue
+			}
+	
+			results = append(results, gin.H{
+				"source_title": item.Title,
+				"link":         item.Link,
+				"title":        title,
+				"image":        image,
+				"rewrite":      rewrite,
+			})
+		}
+	
+		c.JSON(200, gin.H{
+			"total_feed":      len(allItems),
+			"processed":       maxProcess,
+			"processed_result": results,
+		})
+	})
 	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
