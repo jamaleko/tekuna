@@ -9,6 +9,10 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
  priorities := []string{
   "kompas.com",
   "inet.detik.com/science",
+  "nasa.gov",
+  "space.com",
+  "arstechnica.com",
+  "sciencedaily.com",
  }
 
  for _, priority := range priorities {
