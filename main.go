@@ -1233,45 +1233,32 @@ func AutoPost() (gin.H, error) {
  // PARSE TITLE AI
  // ====================
 
- newTitle := title
+ re := regexp.MustCompile(
+ (?is)JUDUL\s*:\s*(.*?)\s*ISI\s*:\s*(.*),
+)
 
- newContent := rewrite
+matches :=
+ re.FindStringSubmatch(rewrite)
 
- parts :=
-  strings.SplitN(
-   rewrite,
-   "ISI:",
-   2,
-  )
+newTitle := title
+newContent := rewrite
 
- if len(parts) == 2 {
+if len(matches) >= 3 {
 
-  titlePart :=
-   strings.TrimSpace(parts[0])
+ parsedTitle :=
+  strings.TrimSpace(matches[1])
 
-  contentPart :=
-   strings.TrimSpace(parts[1])
+ parsedContent :=
+  strings.TrimSpace(matches[2])
 
-  titlePart =
-   strings.ReplaceAll(
-    titlePart,
-    "JUDUL:",
-    "",
-   )
-
-  titlePart =
-   strings.TrimSpace(titlePart)
-
-  if titlePart != "" {
-
-   newTitle = titlePart
-  }
-
-  if contentPart != "" {
-
-   newContent = contentPart
-  }
+ if parsedTitle != "" {
+  newTitle = parsedTitle
  }
+
+ if parsedContent != "" {
+  newContent = parsedContent
+ }
+}
 
  // ====================
  // FORMAT HTML
