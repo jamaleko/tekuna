@@ -603,6 +603,75 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 		c.JSON(200, sitemap.URLs)
 	})
+	r.GET("/all-feed", func(c *gin.Context) {
+
+		var allItems []FeedItem
+	
+		// ====================
+		// RSS FEEDS
+		// ====================
+	
+		rssFeeds := []string{
+	
+			"https://inet.detik.com/rss",
+	
+			"https://www.antaranews.com/rss/tekno.xml",
+	
+			"https://www.cnnindonesia.com/teknologi/rss",
+	
+			"https://www.nasa.gov/news-release/feed/",
+	
+			"https://www.space.com/feeds.xml",
+		}
+	
+		for _, feed := range rssFeeds {
+	
+			rss, err := ParseRSS(feed)
+	
+			if err != nil {
+				continue
+			}
+	
+			allItems = append(
+				allItems,
+				rss.Channel.Item...,
+			)
+		}
+	
+		// ====================
+		// SITEMAP FEEDS
+		// ====================
+	
+		sitemapFeeds := []string{
+	
+			"https://www.kompas.com/sitemap-news-sains.xml",
+		}
+	
+		for _, feed := range sitemapFeeds {
+	
+			sitemap, err := ParseSitemap(feed)
+	
+			if err != nil {
+				continue
+			}
+	
+			allItems = append(
+				allItems,
+				sitemap.URLs...,
+			)
+		}
+	
+		// ====================
+		// FILTER
+		// ====================
+	
+		filtered := FilterRSS(allItems)
+	
+		c.JSON(200, gin.H{
+			"total":   len(filtered),
+			"results": filtered,
+		})
+	})
 	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
