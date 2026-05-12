@@ -526,7 +526,9 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			return
 		}
 	
-		c.JSON(200, rss.Channel.Item)
+		filtered := FilterRSS(rss.Channel.Item)
+		
+		c.JSON(200, filtered)
 	})
 	r.GET("/test-google", func(c *gin.Context) {
 
