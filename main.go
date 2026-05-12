@@ -513,44 +513,52 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	})
 	r.GET("/test-rss", func(c *gin.Context) {
 
-		// RSS 1
-		rss1, err := ParseRSS(
+		feeds := []string{
+	
 			"https://inet.detik.com/rss",
-		)
 	
-		if err != nil {
-	
-			c.JSON(500, gin.H{
-				"error": err.Error(),
-			})
-	
-			return
-		}
-	
-		// RSS 2
-		rss2, err := ParseRSS(
 			"https://www.antaranews.com/rss/tekno.xml",
-		)
 	
-		if err != nil {
+			"https://www.cnnindonesia.com/teknologi/rss",
 	
-			c.JSON(500, gin.H{
-				"error": err.Error(),
-			})
+			"https://www.nasa.gov/news-release/feed/",
 	
-			return
+			"https://www.space.com/feeds.xml",
+	
+			"https://feeds.arstechnica.com/arstechnica/science",
+	
+			"https://www.sciencedaily.com/rss/space_time.xml",
 		}
 	
-		// gabungkan item
-		allItems := append(
-			rss1.Channel.Item,
-			rss2.Channel.Item...,
-		)
+		var allItems []struct {
+			Title string `xml:"title"`
+			Link  string `xml:"link"`
+		}
+	
+		for _, feedURL := range feeds {
+	
+			rss, err := ParseRSS(feedURL)
+	
+			if err != nil {
+	
+				println("RSS ERROR:", feedURL)
+	
+				continue
+			}
+	
+			allItems = append(
+				allItems,
+				rss.Channel.Item...,
+			)
+		}
 	
 		// filter niche
 		filtered := FilterRSS(allItems)
 	
-		c.JSON(200, filtered)
+		c.JSON(200, gin.H{
+			"total":    len(filtered),
+			"results":  filtered,
+		})
 	})
 	r.GET("/test-google", func(c *gin.Context) {
 
