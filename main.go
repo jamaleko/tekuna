@@ -991,7 +991,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	  "rewrite": rewrite,
 	 })
 	})
-	r.GET("/auto-post", func(c *gin.Context) {
+	r.GET("/auto-post29", func(c *gin.Context) {
 
 	 result, err := AutoPost()
 	
