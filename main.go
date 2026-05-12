@@ -1152,11 +1152,56 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	 }
 	
 	 // ====================
+	 // PARSE TITLE AI
+	 // ====================
+	
+	 newTitle := title
+	
+	 newContent := rewrite
+	
+	 parts :=
+	  strings.SplitN(
+	   rewrite,
+	   "ISI:",
+	   2,
+	  )
+	
+	 if len(parts) == 2 {
+	
+	  titlePart :=
+	   strings.TrimSpace(parts[0])
+	
+	  contentPart :=
+	   strings.TrimSpace(parts[1])
+	
+	  titlePart =
+	   strings.ReplaceAll(
+	    titlePart,
+	    "JUDUL:",
+	    "",
+	   )
+	
+	  titlePart =
+	   strings.TrimSpace(titlePart)
+	
+	  if titlePart != "" {
+	   newTitle = titlePart
+	  }
+	
+	  if contentPart != "" {
+	   newContent = contentPart
+	  }
+	 }
+	
+	 // ====================
 	 // FORMAT HTML PARAGRAPH
 	 // ====================
 	
 	 paragraphs :=
-	  strings.Split(rewrite, "\n\n")
+	  strings.Split(
+	   newContent,
+	   "\n\n",
+	  )
 	
 	 htmlContent := ""
 	
@@ -1183,7 +1228,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	  newImage, err :=
 	   UploadImageFromURL(
 	    image,
-	    title,
+	    newTitle,
 	   )
 	
 	  if err == nil {
@@ -1196,11 +1241,11 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	 // SAVE DATABASE
 	 // ====================
 	
-	 slug := createSlug(title)
+	 slug := createSlug(newTitle)
 	
 	 berita := Berita{
 	
-	  Judul: title,
+	  Judul: newTitle,
 	
 	  Slug: slug,
 	
@@ -1223,7 +1268,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 	  "status": "posted",
 	
-	  "title": title,
+	  "title": newTitle,
 	
 	  "slug": slug,
 	
