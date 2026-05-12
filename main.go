@@ -514,7 +514,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	r.GET("/test-rss", func(c *gin.Context) {
 
 		rss, err := ParseRSS(
-			"https://www.antaranews.com/rss/terkini.xml",
+			"https://www.kompas.com/sitemap-news-sains.xml",
 		)
 	
 		if err != nil {
