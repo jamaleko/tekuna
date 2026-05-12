@@ -997,9 +997,7 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 	 if err != nil {
 	
-	  c.JSON(500, gin.H{
-	   "error": err.Error(),
-	  })
+	  c.JSON(500, result)
 	
 	  return
 	 }
@@ -1066,323 +1064,308 @@ func StartAutoPostScheduler() {
 }
 func AutoPost() (gin.H, error) {
 
-	  var allItems []FeedItem
+ var allItems []FeedItem
 
-	 // ====================
-	 // RSS FEEDS
-	 // ====================
-	
-	 rssFeeds := []string{
-	
-	  "https://inet.detik.com/rss",
-	
-	  "https://www.antaranews.com/rss/tekno.xml",
-	
-	  "https://www.cnnindonesia.com/teknologi/rss",
-	
-	  "https://www.nasa.gov/news-release/feed/",
-	
-	  "https://www.space.com/feeds.xml",
-	
-	  "https://feeds.arstechnica.com/arstechnica/science",
-	
-	  "https://www.sciencedaily.com/rss/space_time.xml",
-	 }
-	
-	 for _, feed := range rssFeeds {
-	
-	  rss, err := ParseRSS(feed)
-	
-	  if err != nil {
-	
-	   println("RSS ERROR:", feed)
-	
-	   continue
-	  }
-	
-	  allItems = append(
-	   allItems,
-	   rss.Channel.Item...,
-	  )
-	 }
-	
-	 // ====================
-	 // SITEMAP FEEDS
-	 // ====================
-	
-	 sitemapFeeds := []string{
-	
-	  "https://www.kompas.com/sitemap-news-sains.xml",
-	 }
-	
-	 for _, feed := range sitemapFeeds {
-	
-	  sitemap, err := ParseSitemap(feed)
-	
-	  if err != nil {
-	
-	   println("SITEMAP ERROR:", feed)
-	
-	   continue
-	  }
-	
-	  allItems = append(
-	   allItems,
-	   sitemap.URLs...,
-	  )
-	 }
-	
-	 // ====================
-	 // FILTER PRIORITAS
-	 // ====================
-	
-	 priorityItems :=
-	  FilterPriorityLinks(allItems)
-	
-	 if len(priorityItems) == 0 {
-	
-	  c.JSON(500, gin.H{
-	   "error": "priority kosong",
-	  })
-	
-	  return
-	 }
-	
-	 // ====================
-	 // REMOVE DUPLICATE
-	 // ====================
-	
-	 var availableItems []FeedItem
-	
-	 for _, item := range priorityItems {
-	
-	  var existing Berita
-	
-	  err := db.Where(
-	   "source_link = ?",
-	   item.Link,
-	  ).First(&existing).Error
-	
-	  // belum pernah dipost
-	  if err == gorm.ErrRecordNotFound {
-	
-	   availableItems =
-	    append(
-	     availableItems,
-	     item,
-	    )
-	  }
-	 }
-	
-	 // semua habis
-	 if len(availableItems) == 0 {
-	
-	  c.JSON(200, gin.H{
-	
-	   "status": "semua artikel sudah dipost",
-	  })
-	
-	  return
-	 }
-	
-	 // ====================
-	 // RANDOM ARTICLE
-	 // ====================
-	
-	 randIndex :=
-	  rand.Intn(len(availableItems))
-	
-	 item := availableItems[randIndex]
-	
-	 println("RANDOM:", item.Title)
-	
-	 // ====================
-	 // SCRAPE ARTICLE
-	 // ====================
-	
-	 title, content, image, err :=
-	  ScrapeArticle(item.Link)
-	
-	 if err != nil {
-	
-	  c.JSON(500, gin.H{
-	   "error": err.Error(),
-	  })
-	
-	  return
-	 }
-	
-	 // content terlalu pendek
-	 if len(content) < 500 {
-	
-	  c.JSON(500, gin.H{
-	   "error": "content terlalu pendek",
-	  })
-	
-	  return
-	 }
-	
-	 // ====================
-	 // AI REWRITE
-	 // ====================
-	
-	 source :=
-	  "Judul: " + title +
-	   "\n\n" + content
-	
-	 rewrite, err :=
-	  GenerateAIArticle(source)
-	
-	 if err != nil {
-	
-	  c.JSON(500, gin.H{
-	   "error": err.Error(),
-	  })
-	
-	  return
-	 }
-	
-	 // ====================
-	 // PARSE TITLE AI
-	 // ====================
-	
-	 newTitle := title
-	
-	 newContent := rewrite
-	
-	 parts :=
-	  strings.SplitN(
-	   rewrite,
-	   "ISI:",
-	   2,
-	  )
-	
-	 if len(parts) == 2 {
-	
-	  titlePart :=
-	   strings.TrimSpace(parts[0])
-	
-	  contentPart :=
-	   strings.TrimSpace(parts[1])
-	
-	  titlePart =
-	   strings.ReplaceAll(
-	    titlePart,
-	    "JUDUL:",
-	    "",
-	   )
-	
-	  titlePart =
-	   strings.TrimSpace(titlePart)
-	
-	  if titlePart != "" {
-	
-	   newTitle = titlePart
-	  }
-	
-	  if contentPart != "" {
-	
-	   newContent = contentPart
-	  }
-	 }
-	
-	 // ====================
-	 // FORMAT HTML
-	 // ====================
-	
-	 paragraphs :=
-	  strings.Split(
-	   newContent,
-	   "\n\n",
-	  )
-	
-	 htmlContent := ""
-	
-	 for _, p := range paragraphs {
-	
-	  p = strings.TrimSpace(p)
-	
-	  if p == "" {
-	   continue
-	  }
-	
-	  // kalau sudah HTML jangan bungkus lagi
-	  if strings.Contains(p, "<p>") ||
-	   strings.Contains(p, "<h2>") ||
-	   strings.Contains(p, "<h3>") {
-	
-	   htmlContent += p
-	
-	  } else {
-	
-	   htmlContent +=
-	    "<p>" + p + "</p>"
-	  }
-	 }
-	
-	 // ====================
-	 // UPLOAD IMAGE
-	 // ====================
-	
-	 uploadedImage := image
-	
-	 if image != "" {
-	
-	  newImage, err :=
-	   UploadImageFromURL(
-	    image,
-	    newTitle,
-	   )
-	
-	  if err == nil {
-	
-	   uploadedImage = newImage
-	  }
-	 }
-	
-	 // ====================
-	 // SAVE DATABASE
-	 // ====================
-	
-	 slug := createSlug(newTitle)
-	
-	 berita := Berita{
-	
-	  Judul: newTitle,
-	
-	  Slug: slug,
-	
-	  Isi: htmlContent,
-	
-	  Gambar: uploadedImage,
-	
-	  SourceLink: item.Link,
-	
-	  Tanggal: time.Now(),
-	 }
-	
-	 db.Create(&berita)
-	 // ====================
-	 // RESULT
-	 // ====================
-	
-	 c.JSON(200, gin.H{
-	
-	  "status": "posted",
-	
-	  "title": newTitle,
-	
-	  "slug": slug,
-	
-	  "image": uploadedImage,
-	
-	  "url": "https://tekuna.my.id/berita/" + slug,
-	 })
-	
-	 return gin.H{
-	  "status": "posted",
-	 }, nil
-	}
+ // ====================
+ // RSS FEEDS
+ // ====================
+
+ rssFeeds := []string{
+
+  "https://inet.detik.com/rss",
+
+  "https://www.antaranews.com/rss/tekno.xml",
+
+  "https://www.cnnindonesia.com/teknologi/rss",
+
+  "https://www.nasa.gov/news-release/feed/",
+
+  "https://www.space.com/feeds.xml",
+
+  "https://feeds.arstechnica.com/arstechnica/science",
+
+  "https://www.sciencedaily.com/rss/space_time.xml",
+ }
+
+ for _, feed := range rssFeeds {
+
+  rss, err := ParseRSS(feed)
+
+  if err != nil {
+
+   println("RSS ERROR:", feed)
+
+   continue
+  }
+
+  allItems = append(
+   allItems,
+   rss.Channel.Item...,
+  )
+ }
+
+ // ====================
+ // SITEMAP FEEDS
+ // ====================
+
+ sitemapFeeds := []string{
+
+  "https://www.kompas.com/sitemap-news-sains.xml",
+ }
+
+ for _, feed := range sitemapFeeds {
+
+  sitemap, err := ParseSitemap(feed)
+
+  if err != nil {
+
+   println("SITEMAP ERROR:", feed)
+
+   continue
+  }
+
+  allItems = append(
+   allItems,
+   sitemap.URLs...,
+  )
+ }
+
+ // ====================
+ // FILTER PRIORITAS
+ // ====================
+
+ priorityItems :=
+  FilterPriorityLinks(allItems)
+
+ if len(priorityItems) == 0 {
+
+  return gin.H{
+   "error": "priority kosong",
+  }, fmt.Errorf("priority kosong")
+ }
+
+ // ====================
+ // REMOVE DUPLICATE
+ // ====================
+
+ var availableItems []FeedItem
+
+ for _, item := range priorityItems {
+
+  var existing Berita
+
+  err := db.Where(
+   "source_link = ?",
+   item.Link,
+  ).First(&existing).Error
+
+  if err == gorm.ErrRecordNotFound {
+
+   availableItems =
+    append(
+     availableItems,
+     item,
+    )
+  }
+ }
+
+ // semua artikel habis
+ if len(availableItems) == 0 {
+
+  return gin.H{
+
+   "status": "semua artikel sudah dipost",
+  }, nil
+ }
+
+ // ====================
+ // RANDOM ARTICLE
+ // ====================
+
+ randIndex :=
+  rand.Intn(len(availableItems))
+
+ item := availableItems[randIndex]
+
+ println("RANDOM:", item.Title)
+
+ // ====================
+ // SCRAPE ARTICLE
+ // ====================
+
+ title, content, image, err :=
+  ScrapeArticle(item.Link)
+
+ if err != nil {
+
+  return gin.H{
+   "error": err.Error(),
+  }, err
+ }
+
+ // content terlalu pendek
+ if len(content) < 500 {
+
+  return gin.H{
+   "error": "content terlalu pendek",
+  }, fmt.Errorf("content terlalu pendek")
+ }
+
+ // ====================
+ // AI REWRITE
+ // ====================
+
+ source :=
+  "Judul: " + title +
+   "\n\n" + content
+
+ rewrite, err :=
+  GenerateAIArticle(source)
+
+ if err != nil {
+
+  return gin.H{
+   "error": err.Error(),
+  }, err
+ }
+
+ // ====================
+ // PARSE TITLE AI
+ // ====================
+
+ newTitle := title
+
+ newContent := rewrite
+
+ parts :=
+  strings.SplitN(
+   rewrite,
+   "ISI:",
+   2,
+  )
+
+ if len(parts) == 2 {
+
+  titlePart :=
+   strings.TrimSpace(parts[0])
+
+  contentPart :=
+   strings.TrimSpace(parts[1])
+
+  titlePart =
+   strings.ReplaceAll(
+    titlePart,
+    "JUDUL:",
+    "",
+   )
+
+  titlePart =
+   strings.TrimSpace(titlePart)
+
+  if titlePart != "" {
+
+   newTitle = titlePart
+  }
+
+  if contentPart != "" {
+
+   newContent = contentPart
+  }
+ }
+
+ // ====================
+ // FORMAT HTML
+ // ====================
+
+ paragraphs :=
+  strings.Split(
+   newContent,
+   "\n\n",
+  )
+
+ htmlContent := ""
+
+ for _, p := range paragraphs {
+
+  p = strings.TrimSpace(p)
+
+  if p == "" {
+   continue
+  }
+
+  // kalau sudah html
+  if strings.Contains(p, "<p>") ||
+   strings.Contains(p, "<h2>") ||
+   strings.Contains(p, "<h3>") {
+
+   htmlContent += p
+
+  } else {
+
+   htmlContent +=
+    "<p>" + p + "</p>"
+  }
+ }
+
+ // ====================
+ // UPLOAD IMAGE
+ // ====================
+
+ uploadedImage := image
+
+ if image != "" {
+
+  newImage, err :=
+   UploadImageFromURL(
+    image,
+    newTitle,
+   )
+
+  if err == nil {
+
+   uploadedImage = newImage
+  }
+ }
+
+ // ====================
+ // SAVE DATABASE
+ // ====================
+
+ slug := createSlug(newTitle)
+
+ berita := Berita{
+
+  Judul: newTitle,
+
+  Slug: slug,
+
+  Isi: htmlContent,
+
+  Gambar: uploadedImage,
+
+  SourceLink: item.Link,
+
+  Tanggal: time.Now(),
+ }
+
+ db.Create(&berita)
+ // ====================
+ // RESULT
+ // ====================
+
+ return gin.H{
+
+  "status": "posted",
+
+  "title": newTitle,
+
+  "slug": slug,
+
+  "image": uploadedImage,
+
+  "url": "https://tekuna.my.id/berita/" + slug,
+ }, nil
+}
 // RegisterSearchRoute daftarkan route /search
 func RegisterSearchRoute(r *gin.Engine) {
     r.GET("/search", searchHandler)
