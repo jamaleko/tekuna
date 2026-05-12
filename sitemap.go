@@ -7,11 +7,7 @@ import (
 )
 
 type Sitemap struct {
-	URLs []URLItem `xml:"url"`
-}
-
-type URLItem struct {
-	Loc string `xml:"loc"`
+	URLs []FeedItem `xml:"url"`
 }
 
 func ParseSitemap(url string) (*Sitemap, error) {
@@ -36,6 +32,13 @@ func ParseSitemap(url string) (*Sitemap, error) {
 
 	if err != nil {
 		return nil, err
+	}
+
+	// convert <loc> -> Link
+	for i := range sitemap.URLs {
+
+		sitemap.URLs[i].Link =
+			sitemap.URLs[i].Loc
 	}
 
 	return &sitemap, nil
