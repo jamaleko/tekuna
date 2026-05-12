@@ -171,6 +171,7 @@ REWRITE KUTIPAN & UCAPAN (WAJIB):
 TAMBAHAN (WAJIB)
 - Jangan ada kata-kata seperti "Keyword Utama" dan "Keyword Turunan" di Isi Artikel, 
   Jika ada maka Isi Artikel dianggap tidak valid
+- Jangan memasukkan judul di Isi Artikel, jika dimasukkan maka Isi Artikel dianggap tidak valid  
 ---
 
  OUTPUT:
