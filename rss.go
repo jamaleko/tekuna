@@ -113,7 +113,7 @@ func FilterRSS(items []struct {
 		}
 
 		// lolos filter
-		if matchA && matchB && !blockedFound {
+		if (matchA || matchB) && !blockedFound {
 
 			filtered = append(filtered, item)
 		}
