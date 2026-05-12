@@ -160,11 +160,11 @@ REWRITE KUTIPAN & UCAPAN (WAJIB):
   - katanya
   
   maka WAJIB di-rewrite agar lebih natural dan bervariasi.
-
+  
+- Tanda petik ("...") WAJIB dipertahankan.
 - Semua kutipan penting narasumber dari artikel sumber WAJIB dipertahankan secara utuh.
 - Jangan memotong isi kutipan utama.
 - Jangan menghilangkan detail penting dalam ucapan narasumber.
-- Tanda petik ("...") wajib dipertahankan.
 - Yang boleh diubah hanya gaya attribution/pengantar kutipan agar lebih natural.
 
 ---
