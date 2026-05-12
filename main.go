@@ -467,8 +467,8 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	
 		preview := content
 	
-		if len(preview) > 3000 {
-			preview = preview[:3000]
+		if len(preview) > 10000 {
+			preview = preview[:10000]
 		}
 	
 		c.JSON(200, gin.H{
