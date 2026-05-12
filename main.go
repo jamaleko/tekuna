@@ -678,6 +678,78 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 	})
 	r.GET("/process-feed", func(c *gin.Context) {
 
+		var allItems []FeedItem
+	
+		// ====================
+		// RSS FEEDS
+		// ====================
+	
+		rssFeeds := []string{
+	
+			"https://inet.detik.com/rss",
+	
+			"https://www.antaranews.com/rss/tekno.xml",
+	
+			"https://www.cnnindonesia.com/teknologi/rss",
+	
+			"https://www.nasa.gov/news-release/feed/",
+	
+			"https://www.space.com/feeds.xml",
+	
+			"https://feeds.arstechnica.com/arstechnica/science",
+	
+			"https://www.sciencedaily.com/rss/space_time.xml",
+		}
+	
+		for _, feed := range rssFeeds {
+	
+			rss, err := ParseRSS(feed)
+	
+			if err != nil {
+				println("RSS ERROR:", feed)
+				continue
+			}
+	
+			allItems = append(
+				allItems,
+				rss.Channel.Item...,
+			)
+		}
+	
+		// ====================
+		// SITEMAP FEEDS
+		// ====================
+	
+		sitemapFeeds := []string{
+	
+			"https://www.kompas.com/sitemap-news-sains.xml",
+		}
+	
+		for _, feed := range sitemapFeeds {
+	
+			sitemap, err := ParseSitemap(feed)
+	
+			if err != nil {
+				println("SITEMAP ERROR:", feed)
+				continue
+			}
+	
+			allItems = append(
+				allItems,
+				sitemap.URLs...,
+			)
+		}
+	
+		// ====================
+		// LIMIT TEST
+		// ====================
+	
+		maxProcess := 5
+	
+		if len(allItems) < maxProcess {
+			maxProcess = len(allItems)
+		}
+	
 		var results []gin.H
 	
 		for i := 0; i < maxProcess; i++ {
