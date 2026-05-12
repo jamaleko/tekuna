@@ -827,6 +827,169 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"processed_result": results,
 		})
 	})
+	r.GET("/kom-dek", func(c *gin.Context) {
+
+	 var allItems []FeedItem
+	
+	 // ====================
+	 // RSS FEEDS
+	 // ====================
+	
+	 rssFeeds := []string{
+	
+	  "https://inet.detik.com/rss",
+	
+	  "https://www.antaranews.com/rss/tekno.xml",
+	
+	  "https://www.cnnindonesia.com/teknologi/rss",
+	
+	  "https://www.nasa.gov/news-release/feed/",
+	
+	  "https://www.space.com/feeds.xml",
+	
+	  "https://feeds.arstechnica.com/arstechnica/science",
+	
+	  "https://www.sciencedaily.com/rss/space_time.xml",
+	 }
+	
+	 for _, feed := range rssFeeds {
+	
+	  rss, err := ParseRSS(feed)
+	
+	  if err != nil {
+	
+	   println("RSS ERROR:", feed)
+	
+	   continue
+	  }
+	
+	  allItems = append(
+	   allItems,
+	   rss.Channel.Item...,
+	  )
+	 }
+	
+	 // ====================
+	 // SITEMAP FEEDS
+	 // ====================
+	
+	 sitemapFeeds := []string{
+	
+	  "https://www.kompas.com/sitemap-news-sains.xml",
+	 }
+	
+	 for _, feed := range sitemapFeeds {
+	
+	  sitemap, err := ParseSitemap(feed)
+	
+	  if err != nil {
+	
+	   println("SITEMAP ERROR:", feed)
+	
+	   continue
+	  }
+	
+	  allItems = append(
+	   allItems,
+	   sitemap.URLs...,
+	  )
+	 }
+	
+	 // ====================
+	 // FILTER PRIORITAS
+	 // ====================
+	
+	 priorityItems :=
+	  FilterPriorityLinks(allItems)
+	
+	 // kosong
+	 if len(priorityItems) == 0 {
+	
+	  c.JSON(500, gin.H{
+	   "error": "priority feed kosong",
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // RANDOM ARTICLE
+	 // ====================
+	
+	 randIndex :=
+	  rand.Intn(len(priorityItems))
+	
+	 item := priorityItems[randIndex]
+	
+	 println("RANDOM:", item.Title)
+	
+	 // ====================
+	 // SCRAPE ARTICLE
+	 // ====================
+	
+	 title, content, image, err :=
+	  ScrapeArticle(item.Link)
+	
+	 if err != nil {
+	
+	  c.JSON(500, gin.H{
+	   "error": err.Error(),
+	  })
+	
+	  return
+	 }
+	
+	 // content terlalu pendek
+	 if len(content) < 500 {
+	
+	  c.JSON(500, gin.H{
+	   "error": "content terlalu pendek",
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // AI REWRITE
+	 // ====================
+	
+	 source :=
+	  "Judul: " + title +
+	   "\n\n" + content
+	
+	 rewrite, err :=
+	  GenerateAIArticle(source)
+	
+	 if err != nil {
+	
+	  c.JSON(500, gin.H{
+	   "error": err.Error(),
+	  })
+	
+	  return
+	 }
+	
+	 // ====================
+	 // RESULT
+	 // ====================
+	
+	 c.JSON(200, gin.H{
+	
+	  "total_feed": len(allItems),
+	
+	  "priority_total": len(priorityItems),
+	
+	  "random_source_title": item.Title,
+	
+	  "random_source_link": item.Link,
+	
+	  "title": title,
+	
+	  "image": image,
+	
+	  "rewrite": rewrite,
+	 })
+	})
 	RegisterSearchRoute(r)
 	// run server
 	r.StaticFile("/favicon.png", "./favicon.png")
