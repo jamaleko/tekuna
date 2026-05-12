@@ -668,12 +668,14 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		}
 	
 		// ====================
-		// NO FILTER
+		// PRIORITY FILTER
 		// ====================
-	
+		
+		priority := FilterPriorityLinks(allItems)
+		
 		c.JSON(200, gin.H{
-			"total":   len(allItems),
-			"results": allItems,
+		 "total":   len(priority),
+		 "results": priority,
 		})
 	})
 	r.GET("/process-feed", func(c *gin.Context) {
@@ -744,14 +746,17 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 		// LIMIT TEST
 		// ====================
 	
-		maxProcess := 5
+		maxProcess := 1
 	
 		if len(allItems) < maxProcess {
 			maxProcess = len(allItems)
 		}
 	
 		var results []gin.H
-	
+		rand.Shuffle(len(allItems), func(i, j int) {
+		 allItems[i], allItems[j] =
+		  allItems[j], allItems[i]
+		})
 		for i := 0; i < maxProcess; i++ {
 	
 			item := allItems[i]
