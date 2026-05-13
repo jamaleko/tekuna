@@ -479,6 +479,17 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"content": preview,
 		})
 	})
+	r.GET("/api/ping", func(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "status": "ok",
+        "message": "server alive",
+        "time": time.Now(),
+    })
+})
+
+r.HEAD("/api/ping", func(c *gin.Context) {
+    c.Status(200)
+})
 	r.GET("/test-ai", func(c *gin.Context) {
 
 		url := c.Query("url")
