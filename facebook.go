@@ -10,7 +10,6 @@ import (
 )
 
 func ShareToFacebook(
- title string,
  link string,
 ) error {
 
@@ -28,11 +27,10 @@ func ShareToFacebook(
   )
  }
 
- message :=
-  title + "\n\n" + link
-
  form := url.Values{}
- form.Set("message", message)
+
+ // 🔥 hanya kirim link
+ form.Set("link", link)
 
  apiURL :=
   "https://graph.facebook.com/" +
