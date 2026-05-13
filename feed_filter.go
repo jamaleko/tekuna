@@ -11,6 +11,7 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
   "inet.detik.com/science",
   "cnnindonesia.com",
   "antaranews.com",
+  "tempo.co/tekno",
   //"nasa.gov",
  // "space.com",
  // "arstechnica.com",
