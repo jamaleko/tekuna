@@ -29,6 +29,7 @@ func RemoveBlockedKeywords(items []FeedItem) []FeedItem {
 "ps4",
 "spesifikasi",
 "poco",
+"spek",		
 	}
 
 	for _, item := range items {
