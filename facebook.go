@@ -17,34 +17,46 @@ func ShareToFacebook(
   os.Getenv("FB_PAGE_ID")
 
  token :=
-  os.Getenv("FB_ACCESS_TOKEN")
+  os.Getenv("FB_PAGE_TOKEN")
 
- url :=
+ api :=
   "https://graph.facebook.com/" +
    pageID +
    "/feed"
 
- payload := map[string]string{
-  "message": title,
-  "link":    link,
-  "access_token": token,
- }
+ data := url.Values{}
 
- jsonData, _ :=
-  json.Marshal(payload)
+ data.Set(
+  "message",
+  title,
+ )
+
+ data.Set(
+  "link",
+  link,
+ )
+
+ data.Set(
+  "access_token",
+  token,
+ )
 
  resp, err :=
-  http.Post(
-   url,
-   "application/json",
-   bytes.NewBuffer(jsonData),
-  )
+  http.PostForm(api, data)
 
  if err != nil {
   return err
  }
 
  defer resp.Body.Close()
+
+ body, _ :=
+  io.ReadAll(resp.Body)
+
+ println(
+  "FB RESPONSE:",
+  string(body),
+ )
 
  if resp.StatusCode != 200 {
 
