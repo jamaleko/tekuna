@@ -1391,6 +1391,7 @@ func AutoPost() (gin.H, error) {
  }
 
  db.Create(&berita)
+	time.Sleep(20 * time.Second)
 	err = ShareToFacebook(
 	 "https://tekuna.my.id/berita/" + berita.Slug,
 	)
