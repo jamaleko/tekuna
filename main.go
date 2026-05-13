@@ -685,7 +685,7 @@ r.HEAD("/api/ping", func(c *gin.Context) {
 		// ====================
 		
 		priority := FilterPriorityLinks(allItems)
-		
+		priority = RemoveBlockedKeywords(priority)
 		c.JSON(200, gin.H{
 		 "total":   len(priority),
 		 "results": priority,
