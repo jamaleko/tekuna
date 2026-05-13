@@ -1392,8 +1392,7 @@ func AutoPost() (gin.H, error) {
 
  db.Create(&berita)
 	err = ShareToFacebook(
-	 berita.Judul,
-	 "https://tekuna.my.id/berita/"+berita.Slug,
+	 "https://tekuna.my.id/berita/" + berita.Slug,
 	)
 	
 	if err != nil {
