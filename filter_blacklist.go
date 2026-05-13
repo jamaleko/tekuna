@@ -12,6 +12,8 @@ func RemoveBlockedKeywords(items []FeedItem) []FeedItem {
 		"gadget",
 		"smartphone",
 		"hp",
+		"iphone",
+		"android",
 	}
 
 	for _, item := range items {
