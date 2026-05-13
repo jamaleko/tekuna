@@ -1140,12 +1140,12 @@ func AutoPost() (gin.H, error) {
  if len(priorityItems) == 0 {
 
   return gin.H{
-   "error": "priority kosong",
-  }, fmt.Errorf("priority kosong")
+   "status": "priority kosong",
+  }, nil
  }
 
  // ====================
- // REMOVE DUPLICATE
+ // FILTER YANG BELUM DIPOST
  // ====================
 
  var availableItems []FeedItem
@@ -1161,19 +1161,20 @@ func AutoPost() (gin.H, error) {
 
   if err == gorm.ErrRecordNotFound {
 
-   availableItems =
-    append(
-     availableItems,
-     item,
-    )
+   availableItems = append(
+    availableItems,
+    item,
+   )
   }
  }
 
- // semua artikel habis
+ // ====================
+ // SEMUA SUDAH DIPOST
+ // ====================
+
  if len(availableItems) == 0 {
 
   return gin.H{
-
    "status": "semua artikel sudah dipost",
   }, nil
  }
@@ -1187,7 +1188,7 @@ func AutoPost() (gin.H, error) {
 
  item := availableItems[randIndex]
 
- println("RANDOM:", item.Title)
+ println("AUTO POST:", item.Title)
 
  // ====================
  // SCRAPE ARTICLE
@@ -1203,12 +1204,15 @@ func AutoPost() (gin.H, error) {
   }, err
  }
 
- // content terlalu pendek
+ // ====================
+ // CONTENT TOO SHORT
+ // ====================
+
  if len(content) < 500 {
 
   return gin.H{
    "error": "content terlalu pendek",
-  }, fmt.Errorf("content terlalu pendek")
+  }, nil
  }
 
  // ====================
@@ -1230,35 +1234,87 @@ func AutoPost() (gin.H, error) {
  }
 
  // ====================
- // PARSE TITLE AI
+ // NORMALIZE QUOTES
  // ====================
 
- re := regexp.MustCompile(
- `(?is)JUDUL\s*:\s*(.*?)\s*ISI\s*:\s*(.*)`,
-)
+ rewrite =
+  strings.ReplaceAll(
+   rewrite,
+   "“",
+   `"`,
+  )
 
-matches :=
- re.FindStringSubmatch(rewrite)
+ rewrite =
+  strings.ReplaceAll(
+   rewrite,
+   "”",
+   `"`,
+  )
 
-newTitle := title
-newContent := rewrite
+ // ====================
+ // PARSE TITLE + CONTENT
+ // ====================
 
-if len(matches) >= 3 {
+ re :=
+  regexp.MustCompile(
+   `(?is)JUDUL\s*:\s*(.*?)\s*ISI\s*:\s*(.*)`,
+  )
 
- parsedTitle :=
-  strings.TrimSpace(matches[1])
+ matches :=
+  re.FindStringSubmatch(rewrite)
 
- parsedContent :=
-  strings.TrimSpace(matches[2])
+ newTitle := ""
 
- if parsedTitle != "" {
-  newTitle = parsedTitle
+ newContent := rewrite
+
+ if len(matches) >= 3 {
+
+  parsedTitle :=
+   strings.TrimSpace(matches[1])
+
+  parsedContent :=
+   strings.TrimSpace(matches[2])
+
+  // title minimal
+  if len(parsedTitle) >= 10 {
+
+   newTitle = parsedTitle
+  }
+
+  if parsedContent != "" {
+
+   newContent = parsedContent
+  }
  }
 
- if parsedContent != "" {
-  newContent = parsedContent
+ // fallback title
+ if newTitle == "" {
+
+  newTitle = title
  }
-}
+
+ // ====================
+ // CLEAN CONTENT
+ // ====================
+
+ newContent =
+  regexp.MustCompile(
+   `(?im)^JUDUL\s*:.*$`,
+  ).ReplaceAllString(
+   newContent,
+   "",
+  )
+
+ newContent =
+  regexp.MustCompile(
+   `(?im)^ISI\s*:.*$`,
+  ).ReplaceAllString(
+   newContent,
+   "",
+  )
+
+ newContent =
+  strings.TrimSpace(newContent)
 
  // ====================
  // FORMAT HTML
@@ -1277,21 +1333,20 @@ if len(matches) >= 3 {
   p = strings.TrimSpace(p)
 
   if p == "" {
+
    continue
   }
 
-  // kalau sudah html
-  if strings.Contains(p, "<p>") ||
-   strings.Contains(p, "<h2>") ||
-   strings.Contains(p, "<h3>") {
+  // jangan bungkus heading
+  if strings.HasPrefix(p, "<h2") ||
+   strings.HasPrefix(p, "<h3") {
 
    htmlContent += p
 
-  } else {
-
-   htmlContent +=
-    "<p>" + p + "</p>"
+   continue
   }
+  htmlContent +=
+   "<p>" + p + "</p>"
  }
 
  // ====================
@@ -1336,6 +1391,7 @@ if len(matches) >= 3 {
  }
 
  db.Create(&berita)
+
  // ====================
  // RESULT
  // ====================
@@ -1348,9 +1404,11 @@ if len(matches) >= 3 {
 
   "slug": slug,
 
+  "url": "https://tekuna.my.id/berita/" + slug,
+
   "image": uploadedImage,
 
-  "url": "https://tekuna.my.id/berita/" + slug,
+  "source": item.Link,
  }, nil
 }
 // RegisterSearchRoute daftarkan route /search
