@@ -1088,6 +1088,7 @@ func AutoPost() (gin.H, error) {
   "https://www.antaranews.com/rss/tekno.xml",
 
   "https://www.cnnindonesia.com/teknologi/rss",
+  "https://rss.tempo.co/tekno",
 
   "https://www.nasa.gov/news-release/feed/",
 
@@ -1147,7 +1148,7 @@ func AutoPost() (gin.H, error) {
 
  priorityItems :=
   FilterPriorityLinks(allItems)
-
+priorityItems = RemoveBlockedKeywords(priorityItems)
  if len(priorityItems) == 0 {
 
   return gin.H{
