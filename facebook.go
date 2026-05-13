@@ -5,6 +5,7 @@ import (
  "encoding/json"
  "fmt"
  "net/http"
+ "net/url"
  "os"
 )
 
@@ -16,33 +17,37 @@ func ShareToFacebook(
  pageID :=
   os.Getenv("FB_PAGE_ID")
 
- token :=
+ pageToken :=
   os.Getenv("FB_PAGE_TOKEN")
 
- api :=
+ if pageID == "" ||
+  pageToken == "" {
+
+  return fmt.Errorf(
+   "FB env kosong",
+  )
+ }
+
+ message :=
+  title + "\n\n" + link
+
+ form := url.Values{}
+ form.Set("message", message)
+
+ apiURL :=
   "https://graph.facebook.com/" +
    pageID +
-   "/feed"
-
- data := url.Values{}
-
- data.Set(
-  "message",
-  title,
- )
-
- data.Set(
-  "link",
-  link,
- )
-
- data.Set(
-  "access_token",
-  token,
- )
+   "/feed?access_token=" +
+   pageToken
 
  resp, err :=
-  http.PostForm(api, data)
+  http.Post(
+   apiURL,
+   "application/x-www-form-urlencoded",
+   bytes.NewBufferString(
+    form.Encode(),
+   ),
+  )
 
  if err != nil {
   return err
@@ -50,12 +55,14 @@ func ShareToFacebook(
 
  defer resp.Body.Close()
 
- body, _ :=
-  io.ReadAll(resp.Body)
+ var result map[string]interface{}
 
- println(
+ json.NewDecoder(resp.Body).
+  Decode(&result)
+
+ fmt.Println(
   "FB RESPONSE:",
-  string(body),
+  result,
  )
 
  if resp.StatusCode != 200 {
