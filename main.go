@@ -840,6 +840,31 @@ r.HEAD("/api/ping", func(c *gin.Context) {
 			"processed_result": results,
 		})
 	})
+	r.GET("/og/:file", func(c *gin.Context) {
+
+	file := c.Param("file")
+
+	imageURL :=
+		"https://sjhqjzxylogbmsshixke.supabase.co/storage/v1/render/image/public/images/" +
+			file
+
+	resp, err := http.Get(imageURL)
+
+	if err != nil {
+
+		c.String(500, "gagal load image")
+		return
+	}
+
+	defer resp.Body.Close()
+
+	c.Header(
+		"Content-Type",
+		resp.Header.Get("Content-Type"),
+	)
+
+	io.Copy(c.Writer, resp.Body)
+})
 	r.GET("/kom-dek", func(c *gin.Context) {
 
 	 var allItems []FeedItem
