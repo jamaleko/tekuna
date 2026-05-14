@@ -1432,6 +1432,14 @@ priorityItems = RemoveBlockedKeywords(priorityItems)
  }
 
  db.Create(&berita)
+	err = SendTelegram(
+	"https://tekuna.my.id/berita/" + berita.Slug,
+)
+
+if err != nil {
+
+	println("TELEGRAM ERROR:", err.Error())
+}
 	time.Sleep(20 * time.Second)
 	err = ShareToFacebook(
 	 "https://tekuna.my.id/berita/" + berita.Slug,
