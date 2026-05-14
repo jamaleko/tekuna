@@ -175,6 +175,9 @@ func main() {
 
 			return fmt.Sprintf("%d detik lalu", seconds)
 		},
+		"base": func(s string) string {
+    return filepath.Base(s)
+},
 		"metaDesc": func(s string) string {
 		    // 1. hapus tag HTML
 		    re := regexp.MustCompile("<.*?>")
