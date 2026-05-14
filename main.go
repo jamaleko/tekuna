@@ -848,7 +848,7 @@ r.HEAD("/api/ping", func(c *gin.Context) {
 	file := c.Param("file")
 
 	imageURL :=
-		"https://sjhqjzxylogbmsshixke.supabase.co/storage/v1/render/image/public/images/" +
+		"https://sjhqjzxylogbmsshixke.supabase.co/storage/v1/object/public/images/" +
 			file
 
 	resp, err := http.Get(imageURL)
