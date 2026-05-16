@@ -35,6 +35,7 @@ ISI:
 [isi artikel HTML]
 
 ATURAN KRITIS:
+- Jika Tidak Ada <h2> di Paragraf Pertama , Maka Isi Artikel di anggap tidak valid
 - Semua jenis tanda kutip wajib dipertahankan:
   - "..."
   - “...”
