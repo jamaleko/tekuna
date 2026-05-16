@@ -35,7 +35,18 @@ ISI:
 [isi artikel HTML]
 
 ATURAN KRITIS:
-- Jika Tidak Ada <h2> di Paragraf Pertama , Maka Isi Artikel di anggap tidak valid
+
+- Output WAJIB dimulai dari karakter pertama dengan:
+
+JUDUL:
+
+- Kata pertama di baris pertama WAJIB "JUDUL:"
+- Setelah judul selesai, WAJIB ada:
+
+ISI:
+
+- Kata "JUDUL:" dan "ISI:" tidak boleh diubah, dihilangkan, diterjemahkan, atau diganti
+- Jika output tidak diawali "JUDUL:" maka output dianggap TIDAK VALID
 - Semua jenis tanda kutip wajib dipertahankan:
   - "..."
   - “...”
