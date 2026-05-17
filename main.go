@@ -626,7 +626,7 @@ r.HEAD("/api/ping", func(c *gin.Context) {
 		rssFeeds := []string{
 	
 			"https://inet.detik.com/rss",
-	
+			 "https://dailysocial.id/feed", 
 			"https://www.antaranews.com/rss/tekno.xml",
 	
 			"https://www.cnnindonesia.com/teknologi/rss",
@@ -1113,6 +1113,7 @@ func AutoPost() (gin.H, error) {
  rssFeeds := []string{
 
   "https://inet.detik.com/rss",
+  "https://dailysocial.id/feed", 
 
   "https://www.antaranews.com/rss/tekno.xml",
 
