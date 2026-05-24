@@ -1431,8 +1431,12 @@ priorityItems = RemoveBlockedKeywords(priorityItems)
 
   Tanggal: time.Now(),
  }
-
- db.Create(&berita)
+fmt.Println("SAVE TEST")
+fmt.Println("Judul:", berita.Judul)
+fmt.Println("Slug:", berita.Slug)
+fmt.Println("Gambar:", berita.Gambar)
+fmt.Println("Isi panjang:", len(berita.Isi))
+ //db.Create(&berita)
 	err = SendTelegram(
 	"https://tekuna.my.id/berita/" + berita.Slug,
 )
