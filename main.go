@@ -1425,7 +1425,6 @@ for _, item := range priorityItems {
   Tanggal: time.Now(),
  }
 fmt.Println("SAVE TEST")
-slug := createSlug(newTitle)
 
 os.MkdirAll("./generated", os.ModePerm)
 
