@@ -11,7 +11,7 @@ func GenerateAIArticle(source string) (string, error) {
 
  config :=
   openai.DefaultConfig(
-   os.Getenv("GROQ_API_KEY"),
+   "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"
   )
 
  config.BaseURL =
