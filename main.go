@@ -1425,6 +1425,39 @@ for _, item := range priorityItems {
   Tanggal: time.Now(),
  }
 fmt.Println("SAVE TEST")
+slug := createSlug(newTitle)
+
+os.MkdirAll("./generated", os.ModePerm)
+
+mdxContent := fmt.Sprintf(---
+title: "%s"
+date: "%s"
+draft: false
+---
+
+%s
+,
+    newTitle,
+    time.Now().Format("2006-01-02"),
+    htmlContent,
+)
+
+filePath := "./generated/" + slug + ".mdx"
+
+err = os.WriteFile(
+    filePath,
+    []byte(mdxContent),
+    0644,
+)
+
+if err != nil {
+
+    fmt.Println("GAGAL SAVE:", err)
+
+} else {
+
+    fmt.Println("MDX BERHASIL:", filePath)
+}
 fmt.Println("Judul:", berita.Judul)
 fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
