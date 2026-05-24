@@ -1523,6 +1523,7 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
+	time.Sleep(60 * time.Second)
 	err = SendTelegram(
 	"https://tekuna.my.id/berita/" + berita.Slug,
 )
@@ -1531,7 +1532,6 @@ if err != nil {
 
 	println("TELEGRAM ERROR:", err.Error())
 }
-	time.Sleep(20 * time.Second)
 	err = ShareToFacebook(
 	 "https://tekuna.my.id/berita/" + berita.Slug,
 	)
