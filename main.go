@@ -482,6 +482,24 @@ r.HEAD("/disclaimer", func(c *gin.Context) {
 			"content": preview,
 		})
 	})
+	r.GET("/token-test", func(c *gin.Context) {
+
+	    token := os.Getenv("TOKEN_TEKUNA")
+	
+	    if token == "" {
+	
+	        c.JSON(200, gin.H{
+	            "status": "TOKEN KOSONG",
+	        })
+	
+	        return
+	    }
+	
+	    c.JSON(200, gin.H{
+	        "status": "TOKEN ADA",
+	        "length": len(token),
+	    })
+	})
 	r.GET("/api/ping", func(c *gin.Context) {
     c.JSON(200, gin.H{
         "status": "ok",
