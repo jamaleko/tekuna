@@ -23,6 +23,8 @@ import (
 	"html"
 	"encoding/xml"
 	"math/rand"
+	"encoding/base64"
+    "encoding/json"
 )
 
 type Berita struct {
@@ -1475,6 +1477,12 @@ if err != nil {
 } else {
 
     fmt.Println("MDX BERHASIL:", filePath)
+	data, _ := os.ReadFile(filePath)
+
+	PushMDXToRepo(
+	    slug,
+	    string(data),
+	)
 }
 fmt.Println("Judul:", berita.Judul)
 fmt.Println("Slug:", berita.Slug)
@@ -1554,6 +1562,56 @@ func adminCreateForm(c *gin.Context) {
 }
 
 // proses tambah + upload
+func PushMDXToRepo(
+    slug string,
+    content string,
+) error {
+
+    token := os.Getenv("TOKEN_TEKUNA")
+
+    path := "data/blog/" + slug + ".mdx"
+
+    body := map[string]interface{}{
+        "message": "Auto post: " + slug,
+        "content": base64.StdEncoding.EncodeToString(
+            []byte(content),
+        ),
+    }
+
+    jsonData, _ := json.Marshal(body)
+
+    req, _ := http.NewRequest(
+        "PUT",
+        "https://api.github.com/repos/jamaleko/tailwind-nextjs-starter-blog/contents/"+path,
+        bytes.NewBuffer(jsonData),
+    )
+
+    req.Header.Set(
+        "Authorization",
+        "Bearer "+token,
+    )
+
+    req.Header.Set(
+        "Accept",
+        "application/vnd.github+json",
+    )
+
+    client := &http.Client{}
+
+    resp, err := client.Do(req)
+
+    if err != nil {
+        return err
+    }
+
+    defer resp.Body.Close()
+
+    result, _ := io.ReadAll(resp.Body)
+
+    fmt.Println(string(result))
+
+    return nil
+}
 func adminCreate(c *gin.Context) {
 	judul := c.PostForm("judul")
 	isi := c.PostForm("isi")
