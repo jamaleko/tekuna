@@ -1501,6 +1501,12 @@ if err != nil {
             io.Copy(file, resp.Body)
 
             fmt.Println("IMAGE SAVED:", imgPath)
+			imageData, _ := os.ReadFile(imgPath)
+
+			PushImageToRepo(
+			    imageName,
+			    imageData,
+			)
 
         }
     }
@@ -1556,6 +1562,53 @@ if err != nil {
 // RegisterSearchRoute daftarkan route /search
 func RegisterSearchRoute(r *gin.Engine) {
     r.GET("/search", searchHandler)
+}
+func PushImageToRepo(
+    imageName string,
+    imageData []byte,
+) {
+
+    content := base64.StdEncoding.EncodeToString(
+        imageData,
+    )
+
+    body := map[string]interface{}{
+        "message": "auto upload image",
+        "content": content,
+    }
+
+    jsonData, _ := json.Marshal(body)
+
+    req, _ := http.NewRequest(
+        "PUT",
+        "https://api.github.com/repos/jamaleko/tailwind-nextjs-starter-blog/contents/public/static/"+imageName,
+        bytes.NewBuffer(jsonData),
+    )
+
+    req.Header.Set(
+        "Authorization",
+        "token "+os.Getenv("TOKEN_TEKUNA"),
+    )
+
+    req.Header.Set(
+        "Accept",
+        "application/vnd.github+json",
+    )
+
+    client := &http.Client{}
+
+    resp, err := client.Do(req)
+
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+
+    defer resp.Body.Close()
+
+    result, _ := io.ReadAll(resp.Body)
+
+    fmt.Println(string(result))
 }
 // list admin
 func adminList(c *gin.Context) {
