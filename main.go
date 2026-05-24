@@ -1186,29 +1186,22 @@ priorityItems = RemoveBlockedKeywords(priorityItems)
   }, nil
  }
 
- // ====================
- // FILTER YANG BELUM DIPOST
- // ====================
+// ====================
+// FILTER YANG BELUM DIPOST
+// TEMP: BYPASS DB
+// ====================
 
- var availableItems []FeedItem
+var availableItems []FeedItem
 
- for _, item := range priorityItems {
+for _, item := range priorityItems {
 
-  var existing Berita
+    fmt.Println("BYPASS:", item.Link)
 
-  err := db.Where(
-   "source_link = ?",
-   item.Link,
-  ).First(&existing).Error
-
-  if err == gorm.ErrRecordNotFound {
-
-   availableItems = append(
-    availableItems,
-    item,
-   )
-  }
- }
+    availableItems = append(
+        availableItems,
+        item,
+    )
+}
 
  // ====================
  // SEMUA SUDAH DIPOST
