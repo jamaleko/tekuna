@@ -1429,14 +1429,14 @@ slug := createSlug(newTitle)
 
 os.MkdirAll("./generated", os.ModePerm)
 
-mdxContent := fmt.Sprintf(---
+mdxContent := fmt.Sprintf(`---
 title: "%s"
 date: "%s"
 draft: false
 ---
 
 %s
-,
+`,
     newTitle,
     time.Now().Format("2006-01-02"),
     htmlContent,
