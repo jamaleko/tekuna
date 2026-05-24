@@ -70,7 +70,7 @@ func main() {
     PrepareStmt: false,
 })
 	if err != nil {
-	    panic("gagal konek database")
+	    fmt.Println("STEP 2 - DB SKIPED")
 	}
 	fmt.Println("STEP 2 - DB CONNECTED")
 
