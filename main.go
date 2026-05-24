@@ -235,6 +235,7 @@ func main() {
 	    admin.GET("/delete/:id", adminDelete)
 	}
 	r.GET("/github-test", TestGithub)
+	r.GET("/read-mdx", ReadMDX)
 	r.GET("/login", func(c *gin.Context) {
     c.HTML(200, "login.html", nil)
 	})
@@ -1592,6 +1593,23 @@ func adminCreate(c *gin.Context) {
 }
 
 // form edit
+func ReadMDX(c *gin.Context) {
+
+ data, err := os.ReadFile(
+  "./generated/dokumen-ufo-terbaru-pejabat-as-mengungkapkan-penampakan-misterius.mdx",
+ )
+
+ if err != nil {
+  c.JSON(500, gin.H{
+   "error": err.Error(),
+  })
+  return
+ }
+
+ c.JSON(200, gin.H{
+  "content": string(data[:300]),
+ })
+}
 func adminEditForm(c *gin.Context) {
 	id := c.Param("id")
 	var berita Berita
