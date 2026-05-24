@@ -1054,7 +1054,7 @@ func StartAutoPostScheduler() {
 
  ticker :=
   time.NewTicker(
-   5 * time.Minute,
+   60 * time.Minute,
   )
 
  defer ticker.Stop()
