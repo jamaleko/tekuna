@@ -1475,7 +1475,35 @@ if err != nil {
     fmt.Println("GAGAL SAVE:", err)
 
 } else {
+	    // DOWNLOAD IMAGE
+    imageName := slug + ".jpg"
 
+    resp, err := http.Get(uploadedImage)
+    if err != nil {
+        fmt.Println("Gagal download image:", err)
+    } else {
+
+        defer resp.Body.Close()
+
+        os.MkdirAll("./images", os.ModePerm)
+
+        imgPath := "./images/" + imageName
+
+        file, err := os.Create(imgPath)
+        if err != nil {
+
+            fmt.Println(err)
+
+        } else {
+
+            defer file.Close()
+
+            io.Copy(file, resp.Body)
+
+            fmt.Println("IMAGE SAVED:", imgPath)
+
+        }
+    }
     fmt.Println("MDX BERHASIL:", filePath)
 	data, _ := os.ReadFile(filePath)
 
