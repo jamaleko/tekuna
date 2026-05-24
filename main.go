@@ -234,7 +234,7 @@ func main() {
 	    admin.POST("/edit/:id", adminEdit)
 	    admin.GET("/delete/:id", adminDelete)
 	}
-
+	r.GET("/github-test", TestGithub)
 	r.GET("/login", func(c *gin.Context) {
     c.HTML(200, "login.html", nil)
 	})
@@ -1603,6 +1603,41 @@ func adminEditForm(c *gin.Context) {
 }
 
 // proses edit
+func TestGithub(c *gin.Context) {
+
+ token := os.Getenv("TOKEN_TEKUNA")
+
+ req, _ := http.NewRequest(
+  "GET",
+  "https://api.github.com/user",
+  nil,
+ )
+
+ req.Header.Set(
+  "Authorization",
+  "Bearer "+token,
+ )
+
+ client := &http.Client{}
+ resp, err := client.Do(req)
+
+ if err != nil {
+  c.JSON(500, gin.H{
+   "error": err.Error(),
+  })
+  return
+ }
+
+ defer resp.Body.Close()
+
+ body, _ := io.ReadAll(resp.Body)
+
+ c.Data(
+  200,
+  "application/json",
+  body,
+ )
+}
 func adminEdit(c *gin.Context) {
 	id := c.Param("id")
 
