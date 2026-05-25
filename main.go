@@ -1548,9 +1548,9 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-	time.Sleep(240 * time.Second)
+	time.Sleep(6 * time.Minute)
 	err = SendTelegram(
-	"https://tekuna.my.id/berita/" + berita.Slug,
+	"https://www.tekuna.my.id/berita/" + berita.Slug,
 )
 
 if err != nil {
@@ -1558,7 +1558,7 @@ if err != nil {
 	println("TELEGRAM ERROR:", err.Error())
 }
 	err = ShareToFacebook(
-	 "https://tekuna.my.id/berita/" + berita.Slug,
+	 "https://www.tekuna.my.id/berita/" + berita.Slug,
 	)
 	
 	if err != nil {
@@ -1720,23 +1720,44 @@ func PushMDXToRepo(
 }
 func createSummary(content string) string {
 
-    re := regexp.MustCompile("<[^>]*>")
-    clean := re.ReplaceAllString(content, "")
+    // cari paragraf pertama
+    re := regexp.MustCompile(`(?s)<p>(.*?)</p>`)
+    match := re.FindStringSubmatch(content)
 
-    // hapus enter
-    clean = strings.ReplaceAll(clean, "\n", " ")
-    clean = strings.ReplaceAll(clean, "\r", " ")
+    var clean string
 
-    // rapikan spasi ganda
-    clean = strings.Join(strings.Fields(clean), " ")
+    if len(match) > 1 {
 
-    words := strings.Fields(clean)
+        clean = match[1]
 
-    if len(words) > 15 {
-        words = words[:15]
+    } else {
+
+        // fallback kalau tidak ada <p>
+        re2 := regexp.MustCompile("<[^>]*>")
+        clean = re2.ReplaceAllString(content, "")
     }
 
-    return strings.Join(words, " ") + "..."
+    clean = strings.ReplaceAll(clean, "\n", " ")
+    clean = strings.ReplaceAll(clean, "\r", " ")
+    clean = strings.Join(strings.Fields(clean), " ")
+
+    if len(clean) > 160 {
+
+        cut := clean[:160]
+
+        lastSpace := strings.LastIndex(
+            cut,
+            " ",
+        )
+
+        if lastSpace > 0 {
+            cut = cut[:lastSpace]
+        }
+
+        clean = cut + "..."
+    }
+
+    return clean
 }
 func adminCreate(c *gin.Context) {
 	judul := c.PostForm("judul")
