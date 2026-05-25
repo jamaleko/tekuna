@@ -1077,7 +1077,7 @@ func StartAutoPostScheduler() {
 
  ticker :=
   time.NewTicker(
-   60 * time.Minute,
+   30 * time.Minute,
   )
 
  defer ticker.Stop()
@@ -1218,14 +1218,20 @@ var availableItems []FeedItem
 
 for _, item := range priorityItems {
 
-    fmt.Println("BYPASS:", item.Link)
+    if !sourceExists(item.Link) {
 
-    availableItems = append(
-        availableItems,
-        item,
-    )
+        availableItems = append(
+            availableItems,
+            item,
+        )
+    }
 }
+if len(availableItems) == 0 {
 
+    fmt.Println("SEMUA ARTIKEL SUDAH DIPOST / TIDAK ADA ARTIKEL BARU")
+
+    return
+}
  // ====================
  // SEMUA SUDAH DIPOST
  // ====================
@@ -1470,6 +1476,7 @@ images:
   - %s
 socialImage: "%s"
 summary: "%s"
+source_link: "%s"
 draft: false
 ---
 
@@ -1480,6 +1487,7 @@ draft: false
     imagePath,
 	imagePath,
 	summary,
+	item.Link,
     htmlContent,
 )
 
@@ -1548,7 +1556,7 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-	time.Sleep(6 * time.Minute)
+	time.Sleep(3 * time.Minute)
 	err = SendTelegram(
 	"https://www.tekuna.my.id/berita/" + berita.Slug,
 )
@@ -1912,6 +1920,70 @@ func adminDelete(c *gin.Context) {
 	id := c.Param("id")
 	db.Delete(&Berita{}, id)
 	c.Redirect(http.StatusFound, "/admin")
+}
+func sourceExists(link string) bool {
+
+    url := "https://api.github.com/repos/jamaleko/tailwind-nextjs-starter-blog/contents/data/blog"
+
+    req, _ := http.NewRequest(
+        "GET",
+        url,
+        nil,
+    )
+
+    req.Header.Set(
+        "Authorization",
+        "token "+os.Getenv("TOKEN_TEKUNA"),
+    )
+
+    client := &http.Client{}
+
+    resp, err := client.Do(req)
+
+    if err != nil {
+
+        return false
+    }
+
+    defer resp.Body.Close()
+
+    body, _ := io.ReadAll(resp.Body)
+
+    var files []map[string]interface{}
+
+    json.Unmarshal(
+        body,
+        &files,
+    )
+
+    for _, file := range files {
+
+        downloadURL := file["download_url"].(string)
+
+        mdxResp, err := http.Get(
+            downloadURL,
+        )
+
+        if err != nil {
+            continue
+        }
+
+        content, _ := io.ReadAll(
+            mdxResp.Body,
+        )
+
+        mdxResp.Body.Close()
+
+        if strings.Contains(
+            string(content),
+            `source_link: "`+link+`"`,
+        ) {
+
+            return true
+        }
+    }
+
+    return false
 }
 func createSlug(text string) string {
 	// lowercase
