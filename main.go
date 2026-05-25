@@ -1460,7 +1460,7 @@ if ext == "" {
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
 
-mdxContent := fmt.Sprintf(---
+mdxContent := fmt.Sprintf(`---
 title: "%s"
 date: "%s"
 images:
@@ -1469,7 +1469,7 @@ draft: false
 ---
 
 %s
-,
+`,
     newTitle,
     time.Now().Format("2006-01-02"),
     imagePath,
