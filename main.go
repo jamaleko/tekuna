@@ -1720,15 +1720,23 @@ func PushMDXToRepo(
 }
 func createSummary(content string) string {
 
-    // hapus tag html
     re := regexp.MustCompile("<[^>]*>")
     clean := re.ReplaceAllString(content, "")
 
-    if len(clean) > 150 {
-        clean = clean[:150] + "..."
+    // hapus enter
+    clean = strings.ReplaceAll(clean, "\n", " ")
+    clean = strings.ReplaceAll(clean, "\r", " ")
+
+    // rapikan spasi ganda
+    clean = strings.Join(strings.Fields(clean), " ")
+
+    words := strings.Fields(clean)
+
+    if len(words) > 15 {
+        words = words[:15]
     }
 
-    return clean
+    return strings.Join(words, " ") + "..."
 }
 func adminCreate(c *gin.Context) {
 	judul := c.PostForm("judul")
