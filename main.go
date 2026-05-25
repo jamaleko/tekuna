@@ -1448,10 +1448,12 @@ for _, item := range priorityItems {
 fmt.Println("SAVE TEST")
 
 os.MkdirAll("./generated", os.ModePerm)
-
+imagePath := "/static/images/" + imageName
 mdxContent := fmt.Sprintf(`---
 title: "%s"
 date: "%s"
+images:
+	- %s
 draft: false
 ---
 
@@ -1581,7 +1583,7 @@ func PushImageToRepo(
 
     req, _ := http.NewRequest(
         "PUT",
-        "https://api.github.com/repos/jamaleko/tailwind-nextjs-starter-blog/contents/public/static/"+imageName,
+        "https://api.github.com/repos/jamaleko/tailwind-nextjs-starter-blog/contents/public/static/images/"+imageName,
         bytes.NewBuffer(jsonData),
     )
 
