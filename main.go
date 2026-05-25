@@ -1226,12 +1226,7 @@ for _, item := range priorityItems {
         )
     }
 }
-if len(availableItems) == 0 {
 
-    fmt.Println("SEMUA ARTIKEL SUDAH DIPOST / TIDAK ADA ARTIKEL BARU")
-
-    return
-}
  // ====================
  // SEMUA SUDAH DIPOST
  // ====================
