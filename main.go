@@ -1461,14 +1461,15 @@ if ext == "" {
 
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
-
+summary := createSummary(htmlContent)
 mdxContent := fmt.Sprintf(`---
 title: "%s"
 date: "%s"
 layout: PostBanner
 images:
   - %s
-socialImage: %s
+socialImage: "%s"
+summary: "%s"
 draft: false
 ---
 
@@ -1477,7 +1478,8 @@ draft: false
     newTitle,
     time.Now().Format("2006-01-02"),
     imagePath,
-	imagePath,					  
+	imagePath,
+	summary,
     htmlContent,
 )
 
@@ -1546,7 +1548,7 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-	time.Sleep(120 * time.Second)
+	time.Sleep(240 * time.Second)
 	err = SendTelegram(
 	"https://tekuna.my.id/berita/" + berita.Slug,
 )
@@ -1715,6 +1717,18 @@ func PushMDXToRepo(
     fmt.Println(string(result))
 
     return nil
+}
+func createSummary(content string) string {
+
+    // hapus tag html
+    re := regexp.MustCompile("<[^>]*>")
+    clean := re.ReplaceAllString(content, "")
+
+    if len(clean) > 150 {
+        clean = clean[:150] + "..."
+    }
+
+    return clean
 }
 func adminCreate(c *gin.Context) {
 	judul := c.PostForm("judul")
