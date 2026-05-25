@@ -1,0 +1,15 @@
+name: Test Cron
+
+on:
+  schedule:
+    - cron: "*/1 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test
+        run: echo "CRON HIDUP $(date)"
