@@ -34,14 +34,14 @@ jobs:
           # DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
         run: |
-          sed -i 's/func main()/func oldMain()/g' main.go
-
-          cat > tempmain.go <<EOF
+          mv main.go tempmain.go
+        
+          cat > runner.go <<EOF
           package main
-
+        
           func main() {
-              RunAutoPost()
+              AutoPost()
           }
           EOF
-
-          go run tempmain.go runner.go main.go
+        
+          go run .
