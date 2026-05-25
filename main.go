@@ -1448,19 +1448,31 @@ for _, item := range priorityItems {
 fmt.Println("SAVE TEST")
 
 os.MkdirAll("./generated", os.ModePerm)
+
+imageURL, _ := url.Parse(uploadedImage)
+
+ext := path.Ext(imageURL.Path)
+
+if ext == "" {
+    ext = ".jpg"
+}
+
+imageName := slug + ext
 imagePath := "/static/images/" + imageName
-mdxContent := fmt.Sprintf(`---
+
+mdxContent := fmt.Sprintf(---
 title: "%s"
 date: "%s"
 images:
-	- %s
+  - %s
 draft: false
 ---
 
 %s
-`,
+,
     newTitle,
     time.Now().Format("2006-01-02"),
+    imagePath,
     htmlContent,
 )
 
@@ -1477,12 +1489,13 @@ if err != nil {
     fmt.Println("GAGAL SAVE:", err)
 
 } else {
-	    // DOWNLOAD IMAGE
-    imageName := slug + ".jpg"
 
+    // DOWNLOAD IMAGE
     resp, err := http.Get(uploadedImage)
     if err != nil {
+
         fmt.Println("Gagal download image:", err)
+
     } else {
 
         defer resp.Body.Close()
@@ -1503,23 +1516,26 @@ if err != nil {
             io.Copy(file, resp.Body)
 
             fmt.Println("IMAGE SAVED:", imgPath)
-			imageData, _ := os.ReadFile(imgPath)
 
-			PushImageToRepo(
-			    imageName,
-			    imageData,
-			)
+            imageData, _ := os.ReadFile(imgPath)
 
+            PushImageToRepo(
+                imageName,
+                imageData,
+            )
         }
     }
-    fmt.Println("MDX BERHASIL:", filePath)
-	data, _ := os.ReadFile(filePath)
 
-	PushMDXToRepo(
-	    slug,
-	    string(data),
-	)
+    fmt.Println("MDX BERHASIL:", filePath)
+
+    data, _ := os.ReadFile(filePath)
+
+    PushMDXToRepo(
+        slug,
+        string(data),
+    )
 }
+
 fmt.Println("Judul:", berita.Judul)
 fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
