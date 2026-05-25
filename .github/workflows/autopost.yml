@@ -1,11 +1,10 @@
 name: Auto Post
 
 on:
+  workflow_dispatch:
   schedule:
     # tiap 30 menit je
-    - cron: "*/30 * * * *"
-
-  workflow_dispatch:
+    - cron: '*/5 * * * *'
 
 jobs:
   run:
