@@ -25,6 +25,8 @@ import (
 	"math/rand"
 	"encoding/base64"
     "encoding/json"
+	"net/url"
+	"path"
 )
 
 type Berita struct {
