@@ -1465,8 +1465,10 @@ imagePath := "/static/images/" + imageName
 mdxContent := fmt.Sprintf(`---
 title: "%s"
 date: "%s"
+layout: PostBanner
 images:
   - %s
+socialImage: %s
 draft: false
 ---
 
@@ -1543,7 +1545,7 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-	time.Sleep(60 * time.Second)
+	time.Sleep(120 * time.Second)
 	err = SendTelegram(
 	"https://tekuna.my.id/berita/" + berita.Slug,
 )
