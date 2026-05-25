@@ -26,7 +26,7 @@ jobs:
       - name: Run bot
         env:
           # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TOKEN_TEKUNA: ${{ secrets.TOKEN_TEKUNA }}
           # SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           # SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
