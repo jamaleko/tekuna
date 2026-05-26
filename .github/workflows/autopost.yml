@@ -2,8 +2,8 @@ name: Auto Post
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
-  #workflow_dispatch:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   run:
