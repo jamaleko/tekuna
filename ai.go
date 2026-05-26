@@ -2,9 +2,12 @@ package main
 
 import (
  "context"
+ "strings"
+ 
  //"os"
 
  openai "github.com/sashabaranov/go-openai"
+ "golang.org/x/text/unicode/norm"
 )
 
 func GenerateAIArticle(source string) (string, error) {
