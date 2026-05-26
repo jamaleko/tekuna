@@ -133,6 +133,9 @@ Gunakan struktur HTML seperti:
 
  result :=
   resp.Choices[0].Message.Content
-
+  result = norm.NFC.String(result)
+  // hapus karakter rusak
+  result = strings.ReplaceAll(result, "??", "")
+  result = strings.ReplaceAll(result, "�", "")
  return result, nil
 }
