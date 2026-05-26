@@ -1470,7 +1470,7 @@ layout: PostBanner
 images:
   - %s
 socialImage: "%s"
-summary: "%s"
+summary: '%s'
 source_link: "%s"
 draft: false
 ---
