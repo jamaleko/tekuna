@@ -2,6 +2,7 @@ package main
 
 import (
  "context"
+ "regexp"
  "strings"
  
  //"os"
@@ -140,5 +141,53 @@ Gunakan struktur HTML seperti:
   // hapus karakter rusak
   result = strings.ReplaceAll(result, "??", "")
   result = strings.ReplaceAll(result, "�", "")
+  // hapus TAB
+result = strings.ReplaceAll(result, "\t", " ")
+
+// fix enter windows
+result = strings.ReplaceAll(result, "\r", "")
+
+// FIX LIST DALAM <p>
+re := regexp.MustCompile(`(?s)<p>(.*?)((\d+\..*?)+)</p>`)
+
+result = re.ReplaceAllStringFunc(result, func(match string) string {
+
+ clean := strings.ReplaceAll(match, "<p>", "")
+ clean = strings.ReplaceAll(clean, "</p>", "")
+
+ lines := strings.Split(clean, "\n")
+
+ var normal []string
+ var items []string
+
+ numRe := regexp.MustCompile(`^\d+\.\s*`)
+
+ for _, line := range lines {
+
+  line = strings.TrimSpace(line)
+
+  if numRe.MatchString(line) {
+
+   line = numRe.ReplaceAllString(line, "")
+   items = append(items, "<li>"+line+"</li>")
+
+  } else {
+
+   if line != "" {
+    normal = append(normal, line)
+   }
+  }
+ }
+
+ if len(items) == 0 {
+  return "<p>" + clean + "</p>"
+ }
+
+ return "<p>" +
+  strings.Join(normal, " ") +
+  "</p><ol>" +
+  strings.Join(items, "") +
+  "</ol>"
+})
  return result, nil
 }
