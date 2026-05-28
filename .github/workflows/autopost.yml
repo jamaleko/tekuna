@@ -23,7 +23,7 @@ jobs:
 
       - name: Run bot
         env:
-          # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQI_API_KEY }}
           TOKEN_TEKUNA: ${{ secrets.TOKEN_TEKUNA }}
           # SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           # SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
