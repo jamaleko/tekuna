@@ -5,7 +5,7 @@ import (
  "regexp"
  "strings"
  
- //"os"
+ "os"
 
  openai "github.com/sashabaranov/go-openai"
  "golang.org/x/text/unicode/norm"
@@ -14,7 +14,7 @@ import (
 func GenerateAIArticle(source string) (string, error) {
 
  config :=
-  openai.DefaultConfig("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")
+  openai.DefaultConfig(os.Getenv("GROQ_API_KEY"))
 
  config.BaseURL =
   "https://api.groq.com/openai/v1"
