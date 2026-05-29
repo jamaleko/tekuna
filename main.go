@@ -1464,7 +1464,7 @@ imageName := slug + ext
 imagePath := "/static/images/" + imageName
 summary := createSummary(htmlContent)
 mdxContent := fmt.Sprintf(`---
-title: "%s"
+title: '%s'
 date: "%s"
 layout: PostBanner
 images:
