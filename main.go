@@ -1744,6 +1744,13 @@ func createSummary(content string) string {
     clean = strings.ReplaceAll(clean, "\r", " ")
     clean = strings.Join(strings.Fields(clean), " ")
 
+	clean = strings.ReplaceAll(clean, "'", "")
+	/*clean = strings.ReplaceAll(clean, `"`, "")
+	clean = strings.ReplaceAll(clean, "“", "")
+	clean = strings.ReplaceAll(clean, "”", "")
+	clean = strings.ReplaceAll(clean, "‘", "")
+	clean = strings.ReplaceAll(clean, "’", "")*/
+
     if len(clean) > 160 {
 
         cut := clean[:160]
