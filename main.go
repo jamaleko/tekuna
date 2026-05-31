@@ -1747,6 +1747,8 @@ func createSummary(content string) string {
     clean = strings.Join(strings.Fields(clean), " ")
 
 	clean = strings.ReplaceAll(clean, "'", "")
+	clean = strings.ReplaceAll(clean, "(", "")
+	clean = strings.ReplaceAll(clean, ")", "")
 	/*clean = strings.ReplaceAll(clean, `"`, "")
 	clean = strings.ReplaceAll(clean, "“", "")
 	clean = strings.ReplaceAll(clean, "”", "")
