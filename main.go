@@ -1459,7 +1459,9 @@ ext := path.Ext(imageURL.Path)
 if ext == "" {
     ext = ".jpg"
 }
+loc, _ := time.LoadLocation("Asia/Jakarta")
 
+wibTime := time.Now().In(loc)
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
 summary := createSummary(htmlContent)
@@ -1478,7 +1480,7 @@ draft: false
 %s
 `,
     newTitle,
-    time.Now().Format("2006-01-02T15:04:05"),
+    wibTime.Format("2006-01-02T15:04:05"),
     imagePath,
 	imagePath,
 	summary,
