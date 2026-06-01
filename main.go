@@ -1480,8 +1480,9 @@ draft: false
 %s
 `,
     newTitle,
-    wibTime.Format("2006-01-02T15:04:05"),
-    imagePath,
+    //wibTime.Format("2006-01-02T15:04:05"),
+    wibTime.Format(time.RFC3339),
+	imagePath,
 	imagePath,
 	summary,
 	item.Link,
