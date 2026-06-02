@@ -10,7 +10,7 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
   "kompas.com",
   "inet.detik.com/science",
   "cnnindonesia.com",
-  //"antaranews.com",
+  "antaranews.com",
  // "tempo.co",
   //"nasa.gov",
  // "space.com",
