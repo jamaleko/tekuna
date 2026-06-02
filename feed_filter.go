@@ -7,7 +7,7 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
  var filtered []FeedItem
 
  priorities := []string{
-  "antaranews.com",
+  
   "cnnindonesia.com",
   "nasa.gov",
   "kompas.com",
