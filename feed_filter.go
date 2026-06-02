@@ -7,12 +7,13 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
  var filtered []FeedItem
 
  priorities := []string{
+  "nasa.gov",
   "kompas.com",
   "inet.detik.com/science",
   "cnnindonesia.com",
   "antaranews.com",
  // "tempo.co",
-  "nasa.gov",
+  
  // "space.com",
  // "arstechnica.com",
   //"sciencedaily.com",
