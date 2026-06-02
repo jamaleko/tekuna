@@ -12,7 +12,7 @@ func FilterPriorityLinks(items []FeedItem) []FeedItem {
   "cnnindonesia.com",
   "antaranews.com",
  // "tempo.co",
-  //"nasa.gov",
+  "nasa.gov",
  // "space.com",
  // "arstechnica.com",
   //"sciencedaily.com",
