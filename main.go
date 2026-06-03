@@ -1140,7 +1140,7 @@ func AutoPost() (gin.H, error) {
 
   "https://www.antaranews.com/rss/tekno.xml",
 
-  "https://www.cnnindonesia.com/teknologi/rss",
+ // "https://www.cnnindonesia.com/teknologi/rss",
   "https://rss.tempo.co/tekno",
 
   "https://www.nasa.gov/news-release/feed/",
@@ -1476,7 +1476,6 @@ summary: '%s'
 source_link: "%s"
 draft: false
 ---
-
 %s
 `,
     newTitle,
