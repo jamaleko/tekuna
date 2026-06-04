@@ -1461,7 +1461,7 @@ if ext == "" {
 }
 loc, _ := time.LoadLocation("Asia/Jakarta")
 
-wibTime := time.Now().In(loc)
+wibTime := time.Now().In(loc).Add(-1 * time.Minute)
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
 summary := createSummary(htmlContent)
