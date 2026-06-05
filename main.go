@@ -1464,6 +1464,7 @@ loc, _ := time.LoadLocation("Asia/Jakarta")
 wibTime := time.Now().In(loc).Add(-10 * time.Minute)
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
+newTitle = createTitle(newTitle)
 summary := createSummary(htmlContent)
 mdxContent := fmt.Sprintf(`---
 title: '%s'
@@ -1666,7 +1667,10 @@ func adminList(c *gin.Context) {
         "totalPage": totalPage,
     })
 }
-
+func createTitle(title string) string {
+	title = strings.ReplaceAll(title, "'", "\"")
+	return title
+}
 // form tambah
 func adminCreateForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_create.html", nil)
@@ -1749,7 +1753,7 @@ func createSummary(content string) string {
 	clean = strings.ReplaceAll(clean, "'", "")
 	clean = strings.ReplaceAll(clean, "(", "")
 	clean = strings.ReplaceAll(clean, ")", "")
-	clean = strings.ReplaceAll(clean, ".", "")
+	//clean = strings.ReplaceAll(clean, ".", "")
 	/*clean = strings.ReplaceAll(clean, `"`, "")
 	clean = strings.ReplaceAll(clean, "“", "")
 	clean = strings.ReplaceAll(clean, "”", "")
