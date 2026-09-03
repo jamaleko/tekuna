@@ -27,8 +27,8 @@ jobs:
           TOKEN_TEKUNA: ${{ secrets.TOKEN_TEKUNA }}
           # SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           # SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
-          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          # FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          # FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
           # DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
         run: |
