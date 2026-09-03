@@ -110,8 +110,8 @@ Gunakan struktur HTML seperti:
   context.Background(),
   openai.ChatCompletionRequest{
 
-   Model: "llama-3.3-70b-versatile",
-
+   //Model: "llama-3.3-70b-versatile",
+  Model: "openai/gpt-oss-120b",
    Messages: []openai.ChatCompletionMessage{
 
     {
