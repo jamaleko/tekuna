@@ -1466,6 +1466,7 @@ wibTime := time.Now().In(loc)
 imageName := slug + ext
 imagePath := "/static/images/" + imageName
 newTitle = createTitle(newTitle)
+htmlContent = strings.ReplaceAll(htmlContent, "</ul><h2>", "</ul>\n\n<h2>")
 summary := createSummary(htmlContent)
 mdxContent := fmt.Sprintf(`---
 title: '%s'
