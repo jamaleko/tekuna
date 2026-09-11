@@ -1556,10 +1556,15 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-	time.Sleep(8 * time.Minute)
+/*	time.Sleep(8 * time.Minute)
 	err = SendTelegram(
 	"https://www.tekuna.my.id/berita/" + berita.Slug,
-)
+)*/
+urlBerita := "https://www.tekuna.my.id/berita/" + berita.Slug
+
+WaitForArticle(urlBerita, berita.Gambar)
+
+err = SendTelegram(urlBerita)
 
 if err != nil {
 
@@ -2033,6 +2038,28 @@ func AuthRequired() gin.HandlerFunc {
 	        c.Next()
 	    }
 	}
+func WaitForArticle(link string, imagePath string) {
+	for {
+		resp, err := http.Get(link)
+
+		if err == nil {
+			body, err := io.ReadAll(resp.Body)
+			resp.Body.Close()
+
+			if err == nil && resp.StatusCode == 200 {
+				html := string(body)
+
+				if strings.Contains(html, imagePath) {
+					fmt.Println("Artikel dan gambar sudah siap")
+					return
+				}
+			}
+		}
+
+		fmt.Println("Artikel belum siap, cek lagi 30 detik...")
+		time.Sleep(30 * time.Second)
+	}
+}
 func uploadToSupabase(file multipart.File, filename string) (string, error) {
 	fmt.Println("SUPABASE_URL:", os.Getenv("SUPABASE_URL"))
     fmt.Println("SUPABASE_KEY:", os.Getenv("SUPABASE_KEY"))
