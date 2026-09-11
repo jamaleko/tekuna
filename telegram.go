@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"io"
+    "strings"
 )
 
 func SendTelegram(link string) error {
@@ -35,4 +37,26 @@ func SendTelegram(link string) error {
 	}
 
 	return nil
+}
+func WaitForArticle(link string, imagePath string) {
+	for {
+		resp, err := http.Get(link)
+
+		if err == nil {
+			body, err := io.ReadAll(resp.Body)
+			resp.Body.Close()
+
+			if err == nil && resp.StatusCode == 200 {
+				html := string(body)
+
+				if strings.Contains(html, imagePath) {
+					fmt.Println("Artikel dan gambar sudah siap")
+					return
+				}
+			}
+		}
+
+		fmt.Println("Artikel belum siap, cek lagi 30 detik...")
+		time.Sleep(30 * time.Second)
+	}
 }
