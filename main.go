@@ -1556,15 +1556,10 @@ fmt.Println("Slug:", berita.Slug)
 fmt.Println("Gambar:", berita.Gambar)
 fmt.Println("Isi panjang:", len(berita.Isi))
  //db.Create(&berita)
-/*	time.Sleep(8 * time.Minute)
+	time.Sleep(8 * time.Minute)
 	err = SendTelegram(
 	"https://www.tekuna.my.id/berita/" + berita.Slug,
-)*/
-urlBerita := "https://www.tekuna.my.id/berita/" + berita.Slug
-
-WaitForArticle(urlBerita, berita.Gambar)
-
-err = SendTelegram(urlBerita)
+)
 
 if err != nil {
 
